@@ -1,0 +1,10 @@
+Metadata-Version: 1.0
+Name: pyneurovault
+Version: 0.1.0
+Summary: python wrapped for NeuroVault api
+Home-page: http://www.neurovault.org
+Author: Poldracklab
+Author-email: vsochat@stanford.edu
+License: LICENSE.txt
+Description: UNKNOWN
+Platform: UNKNOWN
