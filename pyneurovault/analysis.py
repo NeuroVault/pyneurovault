@@ -11,7 +11,7 @@ pyneurovault: a python wrapped for the neurovault api
 
 __author__ = ["Poldracklab","Chris Filo Gorgolewski","Gael Varoquaux","Vanessa Sochat"]
 __version__ = "$Revision: 1.0 $"
-__date__ = "$Date: 2011/09/09 $"
+__date__ = "$Date: 2015/01/16 $"
 __license__ = "BSD"
 
 import json

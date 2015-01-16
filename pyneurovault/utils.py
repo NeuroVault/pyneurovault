@@ -8,11 +8,6 @@ pyneurovault: a python wrapped for the neurovault api
 
 """
 
-__author__ = ["Poldracklab (vsochat@stanford.edu)"]
-__version__ = "$Revision: 1.0 $"
-__date__ = "$Date: 2015/01/15 $"
-__license__ = "Python"
-
 import os
 import json
 import errno
@@ -20,6 +15,12 @@ import urllib2
 import numpy as np
 from pandas.io.json import read_json
 from urllib2 import Request, urlopen, HTTPError
+
+__author__ = ["Poldracklab","Chris Filo Gorgolewski","Gael Varoquaux","Vanessa Sochat"]
+__version__ = "$Revision: 1.0 $"
+__date__ = "$Date: 2015/01/16 $"
+__license__ = "BSD"
+
 
 # File operations 
 
