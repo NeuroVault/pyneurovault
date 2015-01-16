@@ -1,8 +1,9 @@
-MANIFEST.in
 README.txt
 setup.py
 pyneurovault/__init__.py
+pyneurovault/analysis.py
 pyneurovault/api.py
+pyneurovault/nsynth.py
 pyneurovault/utils.py
 pyneurovault.egg-info/PKG-INFO
 pyneurovault.egg-info/SOURCES.txt

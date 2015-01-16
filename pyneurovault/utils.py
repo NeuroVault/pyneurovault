@@ -13,24 +13,42 @@ __version__ = "$Revision: 1.0 $"
 __date__ = "$Date: 2015/01/15 $"
 __license__ = "Python"
 
+import os
 import json
+import errno
 import urllib2
 import numpy as np
 from pandas.io.json import read_json
+from urllib2 import Request, urlopen, HTTPError
 
-# Data Json Object Functions--------------------------------------------------------------
-"""DataJson: internal class for storing json, accessed by NeuroVault Object"""
+# File operations 
+
+def mkdir_p(path):
+  try:
+      os.makedirs(path)
+  except OSError as exc: # Python >2.5
+    if exc.errno == errno.EEXIST and os.path.isdir(path):
+      pass
+    else: raise
+
+def url_get(url):
+  request = Request(url)
+  response = urlopen(request)
+  return response.read()
+
+# Data Json Object
+
 class DataJson:
-  def __init__(self,url,keyname):
+  """DataJson: internal class for storing json, accessed by NeuroVault Object"""
+  def __init__(self,url):
     self.url = url
-    self.keyname = keyname
     self.json = self.__get_json__()
     self.data = self.__parse_json__() 
     self.fields = self.__get_fields__()
 
   """Print json data fields"""
   def __str__(self):
-    return "DataJson Object dj Includes <dj.data:dict,js.json:list,dj.fields:list,dj.url:str,dj.keyname:str>"
+    return "DataJson Object dj Includes <dj.data:dict,js.json:list,dj.fields:list,dj.url:str>"
 
   """Get raw json object"""
   def __get_json__(self):

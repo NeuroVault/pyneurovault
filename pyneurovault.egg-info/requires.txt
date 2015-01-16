@@ -1,1 +1,5 @@
 numpy
+pandas
+nibabel
+nilearn
+joblib
