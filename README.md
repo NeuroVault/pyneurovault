@@ -5,7 +5,8 @@ python wrapper for NeuroVault api (in dev)
 Currently supports: 
 - downloading all image and collections data into tables
 - counting unique cognitive atlas contrasts
-- downloading all images
+- downloading all resampled images
+- decoding with neurosynth terms
 
 Query functionality will be added.
 
