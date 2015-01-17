@@ -19,7 +19,10 @@ contrasts = nv.get_contrasts()
 nv.export_images_tsv("/home/vanessa/Desktop/images.tsv")
 nv.export_collections_tsv("/home/vanessa/Desktop/collections.tsv")
 
-# Download raw images to file
-outfolder = "/home/vanessa/Desktop"
+# Download all images to file
+outfolder = "/home/vanessa/Desktop/task"
 standard = "/usr/share/fsl/data/standard/MNI152_T1_2mm_brain.nii.gz"
 nv.download_and_resample(outfolder,standard)
+
+# Download images from collections 102 and 106
+nv.download_and_resample(outfolder,standard, collection_ids=[42,98])

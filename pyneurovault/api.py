@@ -91,7 +91,7 @@ class NeuroVault:
 
 # Image download
 
-  def download_and_resample(self, dest_dir, target):
+  def download_and_resample(self, dest_dir, target,collection_ids=None):
     """Downloads all stat maps and resamples them to a common space"""
     target_nii = nb.load(target)
     orig_path = os.path.join(dest_dir, "original")
@@ -99,6 +99,10 @@ class NeuroVault:
     resampled_path = os.path.join(dest_dir, "resampled")
     mkdir_p(resampled_path)
     combined_df = self.get_images_with_collections_df()
+    # If the user wants to subset to a set of collections
+    if collection_ids:
+      if isinstance(collection_ids,str): collection_ids = [collection_ids]
+      combined_df = combined_df[combined_df['collection_id'].isin(collection_ids)]
     out_df = combined_df.copy()
 
     for row in combined_df.iterrows():
