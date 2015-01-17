@@ -89,11 +89,6 @@ class NeuroVault:
     """Export collections to tab separated value file (tsv)"""
     self.collections.data.to_csv(output_file,encoding="utf-8",sep="\t")
 
-  def export_images_collections_tsv(self,output_file):
-    """Export images to tab separated value file (tsv)"""
-    combined_df = self.get_images_with_collections_df()
-    combined_df.to_csv(output_file,encoding="utf-8",sep="\t")
-
 # Image download
 
   def download_and_resample(self, dest_dir, target):
