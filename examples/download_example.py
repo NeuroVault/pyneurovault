@@ -15,6 +15,11 @@ nv.get_images_with_collections_df()
 # Get unique cognitive atlas contrasts and counts
 contrasts = nv.get_contrasts()
 
+# Download images, collections, or both
+nv.export_images_tsv("/home/vanessa/Desktop/images.tsv")
+nv.export_collections_tsv("/home/vanessa/Desktop/collections.tsv")
+nv.export_images_collections_tsv("/home/vanessa/Desktop/images_collections.tsv")
+
 # Download raw images to file
 outfolder = "/home/vanessa/Desktop"
 standard = "/usr/share/fsl/data/standard/MNI152_T1_2mm_brain.nii.gz"

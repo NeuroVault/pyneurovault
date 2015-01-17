@@ -79,6 +79,20 @@ class NeuroVault:
     combined_df = pd.merge(images_df, collections_df, how='left', on='collection_id',suffixes=('_image', '_collection'))
     return combined_df
 
+# Export
+
+  def export_images_tsv(self,output_file):
+    """Export images to tab separated value file (tsv)"""
+    self.images.data.to_csv(output_file,encoding="utf-8",sep="\t")
+
+  def export_collections_tsv(self,output_file):
+    """Export collections to tab separated value file (tsv)"""
+    self.collections.data.to_csv(output_file,encoding="utf-8",sep="\t")
+
+  def export_images_collections_tsv(self,output_file):
+    """Export images to tab separated value file (tsv)"""
+    combined_df = self.get_images_with_collections_df()
+    combined_df.to_csv(output_file,encoding="utf-8",sep="\t")
 
 # Image download
 

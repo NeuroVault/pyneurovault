@@ -53,7 +53,7 @@ class DataJson:
 
   """Get raw json object"""
   def __get_json__(self):
-    return urllib2.urlopen(self.url).read()
+    return urllib2.urlopen(self.url).read().encode("utf-8")
     
   """Parse a json object into a dictionary (key = fields) of dictionaries (key = file urls)"""
   def __parse_json__(self):
