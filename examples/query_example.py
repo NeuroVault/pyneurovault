@@ -8,10 +8,10 @@ from pyneurovault import api, pubmed as pm
 doi = "10.1016/j.neurobiolaging.2012.11.002"
 
 # A DOI is associated with a collection. Download it.
-collection = api.collection_from_doi(doi)
+collection = api.collections_from_dois(doi)
 
 # Get the images
-images = api.images_from_collection(collection)
+images = api.images_from_collections(collection)
 
 # Here are the file URLs for the images, as well as contrasts 
 # and cognitive atlas contrasts IDs. (we can use this later to tag to CA)

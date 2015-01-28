@@ -28,12 +28,22 @@ __date__ = "$Date: 2015/01/16 $"
 __license__ = "BSD"
 
 # REST API Wrapper Functions
-def collection_from_doi(doi):
-  return DataJson("http://neurovault.org/api/collections/?DOI=%s" %(doi))
+def collections_from_dois(dois):
+  if isinstance(dois,str): return DataJson("http://neurovault.org/api/collections/?DOI=%s" %(dois))
+  else:
+    collections = []
+    for doi in dois:
+      collections.append(DataJson("http://neurovault.org/api/collections/?DOI=%s" %(doi)))
+    return collections
 
 # Functions to manipulate data returned from REST
-def images_from_collection(collection):
-  return collection.data["images"][0]
+def images_from_collections(collections):
+  if isinstance(collections,list):
+    images = []
+    for collection in collections:
+      images.append(collection.data["images"][0])
+    return images
+  else: return collections.data["images"][0]
 
   
 # NeuroVault Analysis API

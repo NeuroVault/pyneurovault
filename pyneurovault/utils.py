@@ -45,11 +45,10 @@ class DataJson:
     self.url = url
     self.json = self.__get_json__()
     self.data = self.__parse_json__() 
-    self.fields = self.__get_fields__()
-
+    
   """Print json data fields"""
   def __str__(self):
-    return "DataJson Object dj Includes <dj.data:dict,js.json:list,dj.fields:list,dj.url:str>"
+    return "DataJson Object dj Includes <dj.data:pandas,dj.json:list,dj.url:str>"
 
   """Get raw json object"""
   def __get_json__(self):
@@ -59,7 +58,11 @@ class DataJson:
   def __parse_json__(self):
     if not self.json:
       self.json = self.__get_json__()
-    return read_json(self.json)
-    
+    data = read_json(self.json)
+    if data.empty: 
+      print "Warning, %s is not in NeuroVault!" %(self.url)
+      return None
+    else: return data
+
   def __get_fields__(self):
     return list(self.data.columns)
