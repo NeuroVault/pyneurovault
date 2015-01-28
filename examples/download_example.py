@@ -1,6 +1,6 @@
 #!/usr/bin/env python2
 
-# This script will use the pyneurovault module to download meta information about images and collections from NeuroVault
+# This script will use the pyneurovault module to download meta information about images and collections from NeuroVault. This strategy is intended for larger analysis, as the entire images and collections meta data are downloaded at once. For single REST queries, see query_example.py
 
 from pyneurovault import api
 
@@ -25,4 +25,4 @@ standard = "/usr/share/fsl/data/standard/MNI152_T1_2mm_brain.nii.gz"
 nv.download_and_resample(outfolder,standard)
 
 # Download images from collections 102 and 106
-nv.download_and_resample(outfolder,standard, collection_ids=[42,98])
+download_table = nv.download_and_resample(outfolder,standard, collection_ids=[42,98,39])

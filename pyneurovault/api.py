@@ -27,9 +27,20 @@ __version__ = "$Revision: 1.0 $"
 __date__ = "$Date: 2015/01/16 $"
 __license__ = "BSD"
 
+# REST API Wrapper Functions
+def collection_from_doi(doi):
+  return DataJson("http://neurovault.org/api/collections/?DOI=%s" %(doi))
 
+# Functions to manipulate data returned from REST
+def images_from_collection(collection):
+  return collection.data["images"][0]
+
+  
+# NeuroVault Analysis API
+"""A NeuroVault object holds images and collections.
+For doing multiple queries for which single REST does not make sense
+"""
 class NeuroVault:
-  """A NeuroVault object holds images and collections"""
   def __init__(self):
     self.images = self.get_images()                
     self.collections = self.get_collections()      
