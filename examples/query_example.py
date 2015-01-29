@@ -4,6 +4,7 @@
 
 from pyneurovault import api, pubmed as pm
 
+# 1) SINGLE REST QUERY EXAMPLE
 # Here is a doi that we are interested in
 doi = "10.1016/j.neurobiolaging.2012.11.002"
 
@@ -23,6 +24,11 @@ pubmed = pm.Pubmed(email="myname@email.com")
 article = pubmed.get_single_article(doi)
 pmid = article.get_pmid()
 
+
+# 2) SEARCH FIELD ACROSS ALL COLLECTIONS OR DATA
+nv = api.NeuroVault()
+df = nv.get_images_with_collections_df()
+result = nv.search(df=df,column_name="description_collection",search_string="OpenfMRI")
 
 
 

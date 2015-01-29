@@ -100,6 +100,13 @@ class NeuroVault:
     combined_df = pd.merge(images_df, collections_df, how='left', on='collection_id',suffixes=('_image', '_collection'))
     return combined_df
 
+# Search
+
+  def search(self,df,column_name,search_string):
+    """Search a data frame field for a string of choice"""
+    tmp_df = df[df[column_name].isnull() == False]
+    return tmp_df[tmp_df[column_name].str.contains(search_string)]
+
 # Export
 
   def export_images_tsv(self,output_file):
