@@ -60,9 +60,26 @@ class NeuroVault:
     """Download meta information about images in database"""
     return "NeuroVault Object (nv) Includes <nv.images,DataJson><nv.collections,DataJson>}"
 
-  def get_contrasts(self):
+# Summary and Counting Functions
+
+  def get_contrast_counts(self):
     """Get counts of contrasts"""
     return self.images.data["contrast_definition_cogatlas"].value_counts()
+
+  def get_cognitive_atlas_paradigm_counts(self):
+    """Get counts of cognitive atlas paradigms"""
+    return self.images.data["cognitive_paradigm_cogatlas"].value_counts()
+
+  def get_modality_counts(self):
+    """Get counts of modality types"""
+    return self.images.data["modality"].value_counts()
+
+  def get_map_type_counts(self):
+    """Get counts of image map types"""
+    return self.images.data["map_type"].value_counts()
+
+  def get_collection_counts(self):
+    return self.images.data["collection_id"].value_counts()
 
 # Database Query and table preparation
 
@@ -107,6 +124,15 @@ class NeuroVault:
     tmp_df = df[df[column_name].isnull() == False]
     return tmp_df[tmp_df[column_name].str.contains(search_string)]
 
+  def get_image_ids(self,map_type=None,modality=None):
+    """Get image ids with modality and map type filters"""
+    df = self.images.data.copy()
+    if map_type:
+      df = df.loc[df.map_type==map_type]
+    elif modality:
+      df = df.loc[df.modlity==modality] 
+    return df.image_id.tolist()
+
 # Export
 
   def export_images_tsv(self,output_file):
@@ -119,7 +145,7 @@ class NeuroVault:
 
 # Image download
 
-  def download_and_resample(self, dest_dir, target,collection_ids=None):
+  def download_and_resample(self, dest_dir, target,collection_ids=None,image_ids=None):
     """Downloads all stat maps and resamples them to a common space"""
     target_nii = nb.load(target)
     orig_path = os.path.join(dest_dir, "original")
@@ -127,6 +153,9 @@ class NeuroVault:
     resampled_path = os.path.join(dest_dir, "resampled")
     mkdir_p(resampled_path)
     combined_df = self.get_images_with_collections_df()
+    # If the user has specified specific images
+    if image_ids:
+      combined_df = combined_df.loc[combined_df.image_id.isin(image_ids)]
     # If the user wants to subset to a set of collections
     if collection_ids:
       if isinstance(collection_ids,str): collection_ids = [collection_ids]
