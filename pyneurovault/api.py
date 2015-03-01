@@ -170,45 +170,45 @@ class NeuroVault:
         print "Downloading %s" % orig_file
         urllib.urlretrieve(row[1]['file'], orig_file)
 
-      # Compute the background and extrapolate outside of the mask
-      print "Extrapolating %s" % orig_file
-      niimg = nb.load(orig_file)
-      affine = niimg.get_affine()
-      data = niimg.get_data().squeeze()
-      niimg = nb.Nifti1Image(data, affine,header=niimg.get_header())
-      bg_mask = compute_background_mask(niimg).get_data()
-      # Test if the image has been masked:
-      out_of_mask = data[np.logical_not(bg_mask)]
-      if np.all(np.isnan(out_of_mask)) or len(np.unique(out_of_mask)) == 1:
-        # Need to extrapolate
-        data = _extrapolate_out_mask(data.astype(np.float), bg_mask,iterations=3)[0]
-      niimg = nb.Nifti1Image(data, affine,header=niimg.get_header())
-      del out_of_mask, bg_mask
-      # Resampling the file to target and saving the output in the "resampled" folder
-      resampled_file = os.path.join(resampled_path,"%06d%s" % (row[1]['image_id'], ext))
-      print "Resampling %s" % orig_file
-      resampled_nii = resample_img(niimg, target_nii.get_affine(),target_nii.shape)
-      resampled_nii = nb.Nifti1Image(resampled_nii.get_data().squeeze(),
+        # Compute the background and extrapolate outside of the mask
+        print "Extrapolating %s" % orig_file
+        niimg = nb.load(orig_file)
+        affine = niimg.get_affine()
+        data = niimg.get_data().squeeze()
+        niimg = nb.Nifti1Image(data, affine,header=niimg.get_header())
+        bg_mask = compute_background_mask(niimg).get_data()
+        # Test if the image has been masked:
+        out_of_mask = data[np.logical_not(bg_mask)]
+        if np.all(np.isnan(out_of_mask)) or len(np.unique(out_of_mask)) == 1:
+          # Need to extrapolate
+          data = _extrapolate_out_mask(data.astype(np.float), bg_mask,iterations=3)[0]
+        niimg = nb.Nifti1Image(data, affine,header=niimg.get_header())
+        del out_of_mask, bg_mask
+        # Resampling the file to target and saving the output in the "resampled" folder
+        resampled_file = os.path.join(resampled_path,"%06d%s" % (row[1]['image_id'], ext))
+        print "Resampling %s" % orig_file
+        resampled_nii = resample_img(niimg, target_nii.get_affine(),target_nii.shape)
+        resampled_nii = nb.Nifti1Image(resampled_nii.get_data().squeeze(),
                                          resampled_nii.get_affine(),
                                          header=niimg.get_header())
-      if len(resampled_nii.shape) == 3: resampled_nii.to_filename(resampled_file)
-      else:
-        # We have a 4D file
-        assert len(resampled_nii.shape) == 4
-        resampled_data = resampled_nii.get_data()
-        affine = resampled_nii.get_affine()
-        for index in range(resampled_nii.shape[-1]):
-          # First save the files separately
-          this_nii = nb.Nifti1Image(resampled_data[..., index],affine)
-          this_id = int("%i%i" % (-row[1]['image_id'], index))
-          this_file = os.path.join(resampled_path,"%06d%s" % (this_id, ext))
-          this_nii.to_filename(this_file)
-
-          # Second, fix the dataframe
-          out_df = out_df[out_df.image_id != row[1]['image_id']]
-          this_row = row[1].copy()
-          this_row.image_id = this_id
-          out_df = out_df.append(this_row)
+        if len(resampled_nii.shape) == 3: 
+          resampled_nii.to_filename(resampled_file)
+        else:
+          # We have a 4D file
+          assert len(resampled_nii.shape) == 4
+          resampled_data = resampled_nii.get_data()
+          affine = resampled_nii.get_affine()
+          for index in range(resampled_nii.shape[-1]):
+            # First save the files separately
+            this_nii = nb.Nifti1Image(resampled_data[..., index],affine)
+            this_id = int("%i%i" % (-row[1]['image_id'], index))
+            this_file = os.path.join(resampled_path,"%06d%s" % (this_id, ext))
+            this_nii.to_filename(this_file)
+            # Second, fix the dataframe
+            out_df = out_df[out_df.image_id != row[1]['image_id']]
+            this_row = row[1].copy()
+            this_row.image_id = this_id
+            out_df = out_df.append(this_row)
     return out_df
 
 
