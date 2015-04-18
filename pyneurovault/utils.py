@@ -12,6 +12,7 @@ import os
 import json
 import errno
 import urllib2
+import pandas
 import numpy as np
 from pandas.io.json import read_json
 from urllib2 import Request, urlopen, HTTPError
@@ -20,6 +21,17 @@ __author__ = ["Poldracklab","Chris Filo Gorgolewski","Gael Varoquaux","Vanessa S
 __version__ = "$Revision: 1.0 $"
 __date__ = "$Date: 2015/01/16 $"
 __license__ = "BSD"
+
+
+# Get standard brains
+
+def get_standard_brain():
+  cwd = os.path.abspath(os.path.split(__file__)[0])
+  return "%s/MNI152_T1_2mm_brain.nii.gz" %(cwd)
+
+def get_standard_mask():
+  cwd = os.path.abspath(os.path.split(__file__)[0])
+  return "%s/MNI152_T1_2mm_brain_mask.nii.gz" %(cwd)
 
 
 # File operations 
@@ -32,7 +44,7 @@ def mkdir_p(path):
       pass
     else: raise
 
-def url_get(url):
+def get_url(url):
   request = Request(url)
   response = urlopen(request)
   return response.read()
@@ -59,7 +71,8 @@ class DataJson:
   def __parse_json__(self):
     if not self.json:
       self.json = self.__get_json__()
-    data = read_json(self.json)
+    tmp = json.loads(self.json)
+    data = pandas.DataFrame(tmp)
     if data.empty: 
       print "Warning, %s is not in NeuroVault!" %(self.url)
       return None

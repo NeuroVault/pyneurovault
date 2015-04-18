@@ -15,7 +15,7 @@ setup(
     packages=["pyneurovault"],
 
     # Data
-    # package_data = {'pyneurovault':['template/*.html']},
+    package_data = {'pyneurovault':['data/*.nii.gz']},
 
     # Details
     url="http://www.neurovault.org",

@@ -18,7 +18,7 @@ import pandas as pd
 import nibabel as nb
 import numpy as np
 from nilearn.image import resample_img
-from utils import DataJson, mkdir_p, url_get
+from pyneurovault.utils import DataJson, mkdir_p, get_url
 from nipype.utils.filemanip import split_filename
 from nilearn.masking import compute_background_mask, _extrapolate_out_mask
 
@@ -124,6 +124,11 @@ class NeuroVault:
     tmp_df = df[df[column_name].isnull() == False]
     return tmp_df[tmp_df[column_name].str.contains(search_string)]
 
+  def filter(self,df,column_name,field_value):
+    """Filter a data frame to only include matches with field value in column_name"""
+    tmp_df = df[df[column_name].isnull() == False]
+    return tmp_df[tmp_df[column_name]==field_value]
+
   def get_image_ids(self,map_type=None,modality=None):
     """Get image ids with modality and map type filters"""
     df = self.images.data.copy()
@@ -167,48 +172,51 @@ class NeuroVault:
       _, _, ext = split_filename(row[1]['file'])
       orig_file = os.path.join(orig_path, "%04d%s" % (row[1]['image_id'], ext))
       if not os.path.exists(orig_file):
-        print "Downloading %s" % orig_file
-        urllib.urlretrieve(row[1]['file'], orig_file)
+        try:
+          print "Downloading %s" % orig_file
+          urllib.urlretrieve(row[1]['file'], orig_file)
 
-        # Compute the background and extrapolate outside of the mask
-        print "Extrapolating %s" % orig_file
-        niimg = nb.load(orig_file)
-        affine = niimg.get_affine()
-        data = niimg.get_data().squeeze()
-        niimg = nb.Nifti1Image(data, affine,header=niimg.get_header())
-        bg_mask = compute_background_mask(niimg).get_data()
-        # Test if the image has been masked:
-        out_of_mask = data[np.logical_not(bg_mask)]
-        if np.all(np.isnan(out_of_mask)) or len(np.unique(out_of_mask)) == 1:
-          # Need to extrapolate
-          data = _extrapolate_out_mask(data.astype(np.float), bg_mask,iterations=3)[0]
-        niimg = nb.Nifti1Image(data, affine,header=niimg.get_header())
-        del out_of_mask, bg_mask
-        # Resampling the file to target and saving the output in the "resampled" folder
-        resampled_file = os.path.join(resampled_path,"%06d%s" % (row[1]['image_id'], ext))
-        print "Resampling %s" % orig_file
-        resampled_nii = resample_img(niimg, target_nii.get_affine(),target_nii.shape)
-        resampled_nii = nb.Nifti1Image(resampled_nii.get_data().squeeze(),
+          # Compute the background and extrapolate outside of the mask
+          print "Extrapolating %s" % orig_file
+          niimg = nb.load(orig_file)
+          affine = niimg.get_affine()
+          data = niimg.get_data().squeeze()
+          niimg = nb.Nifti1Image(data, affine,header=niimg.get_header())
+          bg_mask = compute_background_mask(niimg).get_data()
+          # Test if the image has been masked:
+          out_of_mask = data[np.logical_not(bg_mask)]
+          if np.all(np.isnan(out_of_mask)) or len(np.unique(out_of_mask)) == 1:
+            # Need to extrapolate
+            data = _extrapolate_out_mask(data.astype(np.float), bg_mask,iterations=3)[0]
+          niimg = nb.Nifti1Image(data, affine,header=niimg.get_header())
+          del out_of_mask, bg_mask
+          # Resampling the file to target and saving the output in the "resampled" folder
+          resampled_file = os.path.join(resampled_path,"%06d%s" % (row[1]['image_id'], ext))
+          print "Resampling %s" % orig_file
+          resampled_nii = resample_img(niimg, target_nii.get_affine(),target_nii.shape)
+          resampled_nii = nb.Nifti1Image(resampled_nii.get_data().squeeze(),
                                          resampled_nii.get_affine(),
                                          header=niimg.get_header())
-        if len(resampled_nii.shape) == 3: 
-          resampled_nii.to_filename(resampled_file)
-        else:
-          # We have a 4D file
-          assert len(resampled_nii.shape) == 4
-          resampled_data = resampled_nii.get_data()
-          affine = resampled_nii.get_affine()
-          for index in range(resampled_nii.shape[-1]):
-            # First save the files separately
-            this_nii = nb.Nifti1Image(resampled_data[..., index],affine)
-            this_id = int("%i%i" % (-row[1]['image_id'], index))
-            this_file = os.path.join(resampled_path,"%06d%s" % (this_id, ext))
-            this_nii.to_filename(this_file)
-            # Second, fix the dataframe
-            out_df = out_df[out_df.image_id != row[1]['image_id']]
-            this_row = row[1].copy()
-            this_row.image_id = this_id
-            out_df = out_df.append(this_row)
+          if len(resampled_nii.shape) == 3: 
+            resampled_nii.to_filename(resampled_file)
+          else:
+            # We have a 4D file
+            assert len(resampled_nii.shape) == 4
+            resampled_data = resampled_nii.get_data()
+            affine = resampled_nii.get_affine()
+            for index in range(resampled_nii.shape[-1]):
+              # First save the files separately
+              this_nii = nb.Nifti1Image(resampled_data[..., index],affine)
+              this_id = int("%i%i" % (-row[1]['image_id'], index))
+              this_file = os.path.join(resampled_path,"%06d%s" % (this_id, ext))
+              this_nii.to_filename(this_file)
+              # Second, fix the dataframe
+              out_df = out_df[out_df.image_id != row[1]['image_id']]
+              this_row = row[1].copy()
+              this_row.image_id = this_id
+              out_df = out_df.append(this_row)
+        except:
+          print "Error downloading image id %s, retry this image." %(row[1]["image_id"])
     return out_df
 
 
