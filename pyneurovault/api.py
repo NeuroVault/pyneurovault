@@ -18,7 +18,7 @@ import pandas as pd
 import nibabel as nb
 import numpy as np
 from nilearn.image import resample_img
-from pyneurovault.utils import DataJson, mkdir_p, get_url
+from pyneurovault.utils import DataJson, get_json, mkdir_p, get_url
 from nipype.utils.filemanip import split_filename
 from nilearn.masking import compute_background_mask, _extrapolate_out_mask
 
@@ -83,23 +83,27 @@ class NeuroVault:
 
 # Database Query and table preparation
 
-  def get_images(self):
+  def get_images(self,pks=None):
     """Download metadata about images stored in NeuroVault and return it as a pandas DataFrame"""
     print "Extracting NeuroVault images meta data..."
-    # Return a DataJson object with data, url, fields, etc.
-    images = DataJson("http://neurovault.org/api/images/?format=json")
-    images.data['collection'] = images.data['collection'].apply(lambda x: int(x.split("/")[-2]))
-    images.data['image_id'] = images.data['url'].apply(lambda x: int(x.split("/")[-2]))
-    images.data.rename(columns={'collection':'collection_id'}, inplace=True)
+    if not pks:
+        images = get_json("images")
+    else:
+        images = get_json("images",pks)            
+    images['collection'] = images['collection'].apply(lambda x: int(x.split("/")[-2]))
+    images['image_id'] = images['url'].apply(lambda x: int(x.split("/")[-2]))
+    images.rename(columns={'collection':'collection_id'}, inplace=True)
     return images
 
-  def get_collections(self):
+  def get_collections(self,pks=None):
     """Download metadata about collections/papers stored in NeuroVault and return it as a pandas DataFrame"""
     print "Extracting NeuroVault collections meta data..."
-    # Return a DataJson object with all fields
-    collections = DataJson("http://neurovault.org/api/collections/?format=json")
-    collections.data.rename(columns={'id':'collection_id'}, inplace=True)
-    collections.data.set_index("collection_id")
+    if not pks:
+        collections = get_json("collections")
+    else:
+        collections = get_json("collections",pks)            
+    collections.rename(columns={'id':'collection_id'}, inplace=True)
+    collections.set_index("collection_id")
     return collections
 
   def get_collections_df(self):

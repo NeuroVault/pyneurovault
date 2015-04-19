@@ -31,8 +31,8 @@ dest_dir = "/home/vanessa/Documents/Work/BRAINMETA/REVERSE_INFERENCE/mr"
 target = "/usr/share/fsl/data/standard/MNI152_T1_2mm.nii.gz"
 image_ids = combined_df.image_id.tolist()
 download_table = nv.download_and_resample(dest_dir, target, image_ids=image_ids)
-download_table.to_csv('%s/download_table.csv' % dest_dir, encoding='utf8')
-combined_df.to_csv('%s/metadata.csv' % dest_dir, encoding='utf8')
+download_table.to_csv('%s/download_table.tsv' % dest_dir, encoding='utf8',sep="\t")
+combined_df.to_csv('%s/metadata.tsv' % dest_dir, encoding='utf8',sep="\t")
 
 # Example 1: Cognitive Decoding with NeuroSynth
 terms_df = get_neurosynth_terms(combined_df)
