@@ -52,8 +52,8 @@ For doing multiple queries for which single REST does not make sense
 """
 class NeuroVault:
   def __init__(self):
-    self.images = self.get_images()                
     self.collections = self.get_collections()      
+    self.images = self.get_images()                
     print self
 
   def __str__(self):
@@ -99,9 +99,9 @@ class NeuroVault:
     """Download metadata about collections/papers stored in NeuroVault and return it as a pandas DataFrame"""
     print "Extracting NeuroVault collections meta data..."
     if not pks:
-        collections = get_json("collections")
+        collections = get_json("collections",limit=1)
     else:
-        collections = get_json("collections",pks)            
+        collections = get_json("collections",pks,limit=1)            
     collections.rename(columns={'id':'collection_id'}, inplace=True)
     collections.set_index("collection_id")
     return collections

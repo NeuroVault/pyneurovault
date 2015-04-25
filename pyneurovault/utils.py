@@ -50,26 +50,38 @@ def get_url(url):
   return response.read()
 
 
-def get_json(data_type,pks=None):
+def get_json(data_type,pks=None,limit=1000):
+    json_all = list()
     if pks==None:  # May not be feasible call if database is too big
-         images = get_url("http://neurovault.org/api/%s/?format=json" %(data_type))
+         url = "http://neurovault.org/api/%s/?limit=%s&format=json" %(data_type,limit)
+         json_single = get_url(url)
+         json_single = json.loads(json_single.decode("utf-8"))
+         print "Found %s results for %s" %(json_single["count"],data_type)
+         print "Retrieving %s" %(url)
+         json_all = json_all + json_single['results']
+         while json_single["next"] is not None:
+             print "Retrieving %s" %(json_single["next"])
+             json_single = get_url(json_single["next"])
+             json_single = json.loads(json_single.decode("utf-8"))
+             json_all = json_all + json_single['results']
     else:
         if isinstance(pks,str): pks = [pks]
-        images = "["
+        json_all = "["
         for p in range(0,len(pks)):
             pk = pks[p]
             print "Retrieving %s %s..." %(data_type[0:-1],pk)
             try:
                 tmp = get_url("http://neurovault.org/api/images/%s/?format=json" %(pk))
                 if p!=0:
-                    images = "%s,%s" %(images,tmp)
+                    json_all = "%s,%s" %(json_all,tmp)
                 else:
-                    images = "%s%s" %(images,tmp)
+                    json_all = "%s%s" %(json_all,tmp)
             except:
                 print "Cannot retrieve %s %s, skipping." %(data_type[0:-1],pk)
             
-        images = "%s]" %(images)
-    return pandas.DataFrame(json.loads(images.decode("utf-8")))
+        json_all = "%s]" %(json_all)
+        json_all = json.loads(json_all.decode("utf-8"))
+    return pandas.DataFrame(json_all)
 
     
 
