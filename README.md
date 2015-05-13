@@ -12,9 +12,7 @@ Query functionality will be added.
 
 ### Installation
 
-    git clone https://github.com/poldracklab/pyneurovault
-    cd pyneurovault
-    sudo python setup.py install
+    pip install git+https://github.com/NeuroVault/pyneurovault
 
 ### Example
 
