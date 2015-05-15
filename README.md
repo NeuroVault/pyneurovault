@@ -1,5 +1,7 @@
 # pyneurovault
 
+[![Build Status](https://travis-ci.org/NeuroVault/pyneurovault.svg?branch=master)](https://travis-ci.org/NeuroVault/pyneurovault)
+
 python wrapper for NeuroVault api (in dev)
 
 Currently supports: 
