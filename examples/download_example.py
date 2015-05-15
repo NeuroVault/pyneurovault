@@ -22,10 +22,10 @@ nv.export_collections_tsv("/home/vanessa/Desktop/collections.tsv")
 # Download all images to file
 outfolder = "/home/vanessa/Desktop/task"
 standard = "/usr/share/fsl/data/standard/MNI152_T1_2mm_brain.nii.gz"
-nv.download_images(outfolder,standard)
+nv.download_images(dest_dir = outfolder,target=standard)
 
 # If you don't want to resample
-nv.download_images(outfolder,standard,resample=False)
+nv.download_images(dest_dir = outfolder,resample=False)
 
-# Download images from collections 102 and 106
-download_table = nv.download_images(outfolder,standard, collection_ids=[102,106])
+# Download images from collections 77 and 457
+download_table = nv.download_images(outfolder, standard, collection_ids=[77,457])
