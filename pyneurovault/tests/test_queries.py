@@ -13,10 +13,10 @@ def test_queries():
     doi = "10.1016/j.neurobiolaging.2012.11.002"
 
     # A DOI is associated with a collection. Download it.
-    collection = api.collections_from_dois(doi)
+    collection = collections_from_dois(doi)
     assert_equal(len(collection),1)
 
     # Get the images
-    images = api.images_from_collections(collection[0]["id"])
+    images = images_from_collections(collection[0]["id"])
     assert_equal(images[0][0]["collection_id"],collection[0]["id"])
  
