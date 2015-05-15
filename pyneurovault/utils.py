@@ -49,23 +49,35 @@ def get_url(url):
   response = urlopen(request)
   return response.read()
 
+'''Return general json'''
+def get_json(url):
+    json_single = get_url(url)
+    json_single = json.loads(json_single.decode("utf-8"))
+    if json_single["count"] == 1:
+        return json_single["results"]
+    else:
+        print "Found %s results." %(json_single["count"])    
+        json_all = json_single["results"]
+        while json_single["next"] is not None:
+             print "Retrieving %s" %(json_single["next"])
+             try:
+                 json_single = get_url(json_single["next"])
+                 json_single = json.loads(json_single.decode("utf-8"))
+                 json_all = json_all + json_single['results']
+             except HTTPError:
+                 print "Cannot get, retrying"
+        return json_all 
 
-def get_json(data_type,pks=None,limit=1000):
+'''Return paginated json data frame, for images and collections'''
+def get_json_df(data_type,pks=None,limit=1000):
     json_all = list()
     if pks==None:  # May not be feasible call if database is too big
          url = "http://neurovault.org/api/%s/?limit=%s&format=json" %(data_type,limit)
-         json_single = get_url(url)
-         json_single = json.loads(json_single.decode("utf-8"))
-         print "Found %s results for %s" %(json_single["count"],data_type)
-         print "Retrieving %s" %(url)
-         json_all = json_all + json_single['results']
-         while json_single["next"] is not None:
-             print "Retrieving %s" %(json_single["next"])
-             json_single = get_url(json_single["next"])
-             json_single = json.loads(json_single.decode("utf-8"))
-             json_all = json_all + json_single['results']
+         json_all = pandas.DataFrame(get_json(url))
+
     else:
         if isinstance(pks,str): pks = [pks]
+        if isinstance(pks,int): pks = [pks]
         json_all = "["
         for p in range(0,len(pks)):
             pk = pks[p]
@@ -80,40 +92,5 @@ def get_json(data_type,pks=None,limit=1000):
                 print "Cannot retrieve %s %s, skipping." %(data_type[0:-1],pk)
             
         json_all = "%s]" %(json_all)
-        json_all = json.loads(json_all.decode("utf-8"))
-    return pandas.DataFrame(json_all)
-
-    
-
-
-# Data Json Object
-
-class DataJson:
-  """DataJson: internal class for storing json, accessed by NeuroVault Object"""
-  def __init__(self,url):
-    self.url = url
-    self.json = self.__get_json__()
-    self.data = self.__parse_json__() 
-    
-  """Print json data fields"""
-  def __str__(self):
-    return "DataJson Object dj Includes <dj.data:pandas,dj.json:list,dj.url:str>"
-
-  """Get raw json object"""
-  def __get_json__(self):
-    json = urllib2.urlopen(self.url).read()
-    return json.decode("utf-8")
-    
-  """Parse a json object into a dictionary (key = fields) of dictionaries (key = file urls)"""
-  def __parse_json__(self):
-    if not self.json:
-      self.json = self.__get_json__()
-    tmp = json.loads(self.json)
-    data = pandas.DataFrame(tmp)
-    if data.empty: 
-      print "Warning, %s is not in NeuroVault!" %(self.url)
-      return None
-    else: return data
-
-  def __get_fields__(self):
-    return list(self.data.columns)
+        json_all = pandas.DataFrame(json.loads(json_all.decode("utf-8")))
+    return json_all
