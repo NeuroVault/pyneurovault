@@ -18,5 +18,5 @@ def test_queries():
 
     # Get the images
     images = images_from_collections(collection[0]["id"])
-    assert_equal(images[0][0]["collection_id"],collection[0]["id"])
+    assert_true(len(images[0]) > 1)
  
