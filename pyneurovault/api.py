@@ -147,13 +147,15 @@ class NeuroVault:
 
 # Image download
 
-    def download_images(self, dest_dir, target,collection_ids=None,image_ids=None,resample=True):
+    def download_images(self, dest_dir, target=None,collection_ids=None,image_ids=None,resample=True):
         """Downloads all stat maps and resamples them to a common space"""
         orig_path = os.path.join(dest_dir, "original")
         mkdir_p(orig_path)
-        if resample:
+        if resample == True:
             resampled_path = os.path.join(dest_dir, "resampled")
             mkdir_p(resampled_path)
+            target_nii = nb.load(target)  
+
         combined_df = self.get_images_with_collections_df()
         # If the user has specified specific images
         if image_ids:
@@ -164,9 +166,6 @@ class NeuroVault:
             combined_df = combined_df[combined_df['collection_id'].isin(collection_ids)]
         out_df = combined_df.copy()
 
-        if resample:
-            target_nii = nib.load(target)  
-
         for row in combined_df.iterrows():
             # Downloading the file to the "original" subfolder
             _, _, ext = split_filename(row[1]['file'])
@@ -176,7 +175,7 @@ class NeuroVault:
                     print "Downloading %s" % orig_file
                     urllib.urlretrieve(row[1]['file'], orig_file)
 
-                    if resample:
+                    if resample == True:
                         # Compute the background and extrapolate outside of the mask
                         print "Extrapolating %s" % orig_file
                         niimg = nb.load(orig_file)

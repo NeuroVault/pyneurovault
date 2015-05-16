@@ -4,8 +4,7 @@ from pyneurovault import api
 nv = api.NeuroVault()
 
 # Get unique cognitive atlas contrasts and counts
-nv.get_contrast_counts()
-nv.get_cognitive_atlas_paradigm_counts()
+nv.get_paradigm_counts()
 nv.get_modality_counts()
 nv.get_map_type_counts()
 nv.get_collection_counts()
@@ -16,5 +15,5 @@ image_ids = nv.get_image_ids(map_type="Z")
 # Download images (also save output file of meta data)
 outfolder = "/home/vanessa/Desktop/Z"
 standard = "/usr/share/fsl/data/standard/MNI152_T1_2mm_brain.nii.gz"
-download_data = nv.download_and_resample(outfolder,standard,image_ids=image_ids)
+download_data = nv.download_images(outfolder,standard,image_ids=image_ids)
 download_data.to_pickle("/home/vanessa/Desktop/Z/image_data.pkl")
