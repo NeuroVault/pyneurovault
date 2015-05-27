@@ -1,4 +1,3 @@
-README.txt
 setup.py
 pyneurovault/__init__.py
 pyneurovault/analysis.py
