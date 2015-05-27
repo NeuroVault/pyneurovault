@@ -38,7 +38,10 @@ def get_frequency_map(images_df, dest_dir, target):
         orig_file = os.path.join(
             resampled_path, "%06d%s" % (row[1]['image_id'], ext))
         resampled_nii = nb.load(orig_file)
-        data = resampled_nii.get_data().squeeze()
+        try:
+            data = resampled_nii.get_data().squeeze()
+        except IOError:
+            continue
         data[np.isnan(data)] = 0
         data[np.logical_not(mask)] = 0
         data = np.abs(data)
