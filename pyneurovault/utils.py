@@ -53,20 +53,23 @@ def get_json(url):
     '''Return general json'''
     json_single = get_url(url)
     json_single = json.loads(json_single.decode("utf-8"))
-    if json_single["count"] == 1:
-        return json_single["results"]
+    if "count" in json_single.keys():
+        if json_single["count"] == 1:
+            return json_single["results"]
+        else:
+            print "Found %s results." % json_single["count"]
+            json_all = json_single["results"]
+            while json_single["next"] is not None:
+                print "Retrieving %s" % json_single["next"]
+                try:
+                    json_single = get_url(json_single["next"])
+                    json_single = json.loads(json_single.decode("utf-8"))
+                    json_all = json_all + json_single['results']
+                except HTTPError:
+                    print "Cannot get, retrying"
+            return json_all
     else:
-        print "Found %s results." % json_single["count"]
-        json_all = json_single["results"]
-        while json_single["next"] is not None:
-            print "Retrieving %s" % json_single["next"]
-            try:
-                json_single = get_url(json_single["next"])
-                json_single = json.loads(json_single.decode("utf-8"))
-                json_all = json_all + json_single['results']
-            except HTTPError:
-                print "Cannot get, retrying"
-        return json_all
+        return json_single
 
 
 def get_json_df(data_type, pks=None, limit=1000):

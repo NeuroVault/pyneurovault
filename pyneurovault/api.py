@@ -42,6 +42,14 @@ def images_from_collections(collection_ids):
         images.append(get_json("http://neurovault.org/api/collections/%s/images" %(collection)))
     return images
    
+def get_images(image_ids):
+    images = []
+    if not isinstance(image_ids,list):
+        image_ids = [image_ids]
+    for image_id in image_ids:
+        images.append(get_json("http://neurovault.org/api/images/%s" %(image_id)))
+    return images
+
   
 # NeuroVault Analysis API
 """A NeuroVault object holds images and collections.
