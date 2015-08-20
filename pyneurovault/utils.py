@@ -48,6 +48,25 @@ def get_url(url):
     response = urlopen(request)
     return response.read()
 
+# From nipy Split a filename into parts: path, base filename and extension
+def split_filename(fname):
+    special_extensions = [".nii.gz", ".tar.gz"]
+
+    pth = os.path.dirname(fname)
+    fname = os.path.basename(fname)
+
+    ext = None
+    for special_ext in special_extensions:
+        ext_len = len(special_ext)
+        if (len(fname) > ext_len) and \
+                (fname[-ext_len:].lower() == special_ext.lower()):
+            ext = fname[-ext_len:]
+            fname = fname[:-ext_len]
+            break
+    if not ext:
+        fname, ext = os.path.splitext(fname)
+
+    return pth, fname, ext
 
 def get_json(url):
     '''Return general json'''
