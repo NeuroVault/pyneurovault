@@ -91,7 +91,7 @@ def get_json_df(data_type, pks=None, limit=1000):
             print "Retrieving %s %s..." % (data_type[0:-1], pk)
             try:
                 tmp = get_url("http://neurovault.org/api"
-                              "/images/%s/?format=json" % pk)
+                              "/%s/%s/?format=json" %(data_type,pk))
                 if p != 0:
                     json_all = "%s,%s" % (json_all, tmp)
                 else:
