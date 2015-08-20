@@ -2,7 +2,7 @@ import sys
 
 # Show dependencies for required packages, from nilearn
 
-DEPENDENCIES = ['six','Cython','numpy', 'scipy', 'sklearn', 'matplotlib', 'nibabel']
+DEPENDENCIES = ['pandas']
 
 
 def print_package_version(package_name, indent='  '):
