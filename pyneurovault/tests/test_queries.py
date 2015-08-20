@@ -16,7 +16,7 @@ def test_queries():
     collection = collections_from_dois(doi)
     assert_equal(len(collection),1)
     collections = collections_from_dois([doi,doi])
-    assert_equal(len(collection),2)    
+    assert_equal(len(collections),2)    
 
     # Get the images
     images = images_from_collections(collection[0]["id"])
