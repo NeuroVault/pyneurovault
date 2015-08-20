@@ -16,12 +16,9 @@ __date__ = "$Date: 2015/01/16 $"
 __license__ = "BSD"
 
 import os
-
 import numpy as np
 import nibabel as nb
-
-from pyneurovault.utils import get_standard_brain
-from nipype.utils.filemanip import split_filename
+from pyneurovault.utils import get_standard_brain, split_filename
 
 
 def get_frequency_map(images_df, dest_dir, target):
@@ -34,6 +31,7 @@ def get_frequency_map(images_df, dest_dir, target):
 
     n_images = 0
     for row in images_df.iterrows():
+        
         _, _, ext = split_filename(row[1]['file'])
         orig_file = os.path.join(
             resampled_path, "%06d%s" % (row[1]['image_id'], ext))
