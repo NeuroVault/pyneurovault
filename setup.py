@@ -23,6 +23,6 @@ setup(
     license="LICENSE.txt",
     description="python wrapped for NeuroVault api",
 
-    install_requires = ["numpy","pandas","nibabel"]
+    install_requires = ["numpy","pandas","nibabel","nilearn"]
 
 )
