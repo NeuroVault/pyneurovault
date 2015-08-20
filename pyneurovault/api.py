@@ -16,8 +16,7 @@ import pandas as pd
 import nibabel as nb
 import numpy as np
 from nilearn.image import resample_img
-from pyneurovault.utils import get_json, get_json_df, mkdir_p, get_url
-from nipype.utils.filemanip import split_filename
+from pyneurovault.utils import get_json, get_json_df, mkdir_p, get_url, split_filename
 from nilearn.masking import compute_background_mask, _extrapolate_out_mask
 
 __author__ = ["Poldracklab","Chris Filo Gorgolewski","Gael Varoquaux","Vanessa Sochat"]
