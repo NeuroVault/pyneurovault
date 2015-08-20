@@ -15,8 +15,12 @@ def test_queries():
     # A DOI is associated with a collection. Download it.
     collection = collections_from_dois(doi)
     assert_equal(len(collection),1)
+    collections = collections_from_dois([doi,doi])
+    assert_equal(len(collection),2)    
 
     # Get the images
     images = images_from_collections(collection[0]["id"])
     assert_true(len(images[0]) > 1)
- 
+    collection_ids = [c[0]["id"] for c in collections]
+    images = images_from_collections(collection_ids)
+    assert_true(len(images) == 2)
