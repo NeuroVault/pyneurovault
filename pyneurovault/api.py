@@ -68,33 +68,58 @@ def get_collection_counts(images):
     return images["collection_id"].value_counts()
 
 # Database Query and table preparation
-def get_data(data_type,pks,limit):
+def get_data(data_type,pks,params=None,extend_url=None):
     """General get function for use by collections and images"""
     print "Extracting NeuroVault %s meta data..." %(data_type)
     if not pks:
-        data = get_json_df(data_type=data_type,limit=limit)
+        data = get_json_df(data_type=data_type,params=params,extend_url=extend_url)
     else:
-        data = get_json_df(data_type,pks,limit=limit)            
+        data = get_json_df(data_type,pks,params=params,extend_url=extend_url)            
     data.rename(columns={'id':'collection_id'}, inplace=True)
     return data
 
-def get_images(pks=None,limit=1000):
-    """Download metadata about images stored in NeuroVault and return it as a pandas DataFrame"""
-    images = get_data(data_type="images",pks=pks,limit=limit)
+# Get image metadata
+def get_images(pks=None,collection_pks=None,limit=1000,params={}):
+    """Download metadata about images stored in NeuroVault and return it as a pandas DataFrame
+       pks: a single or list of primary keys of images
+       collection_pks: optional list of collection keys to limit images to. If specified, pks is ignored 
+       limit: maximum number of results to return per query [default 1000]
+       params: optional dictionary of additional arguments to add (eg, {"param":"value"}
+    """
+    params = check_params(params,limit)
+    if collection_pks:
+        images = get_data(data_type="collections",pks=collection_pks,params=params,extend_url="images")
+    else:
+        images = get_data(data_type="images",pks=pks,params=params)
     images['collection'] = images['collection'].apply(lambda x: int(x.split("/")[-2]))
     images['image_id'] = images['url'].apply(lambda x: int(x.split("/")[-2]))
     return images
 
-def get_collections(pks=None,limit=1):
-    """Download metadata about collections/papers stored in NeuroVault and return it as a pandas DataFrame"""
-    collections = get_data(data_type="collections",pks=pks,limit=limit)
+# Get collection metadata
+def get_collections(pks=None,limit=1,params={}):
+    """Download metadata about collections/papers stored in NeuroVault and return it as a pandas DataFrame
+       pks: a single or list of primary keys of collections
+       limit: maximum number of results to return per query [default 1]
+       params: optional dictionary of additional arguments to add (eg, {"param":"value"}
+    """
+    params = check_params(params,limit)
+    collections = get_data(data_type="collections",pks=pks,params=params)
     collections.set_index("collection_id")
     return collections
 
-def get_images_with_collections():
-    """Downloads metadata about images/statistical maps stored in NeuroVault and enriches it with metadata of the corresponding collections. The result is returned as a pandas DataFrame"""
-    collections_df = get_collections()
-    images_df = get_images()
+def check_params(params,limit):
+    if not isinstance(params,dict):
+        print "Please provide params variable as a dictionary."
+        return
+    return params.update({"limit":limit})
+
+# Get images associated with one or more collections, return data frame with both
+def get_images_with_collections(collection_pks=None):
+    """Downloads metadata about images/statistical maps stored in NeuroVault and enriches it with metadata of the corresponding collections. The result is returned as a pandas DataFrame
+       collection_pks: primary keys for collections. If not specified, will return all collections, all images
+    """
+    collections_df = get_collections(pks=collection_pks)
+    images_df = get_images(collection_pks=collection_pks)
     combined_df = pd.merge(images_df, collections_df, how='left', on='collection_id',suffixes=('_image', '_collection'))
     return combined_df
 
@@ -132,26 +157,24 @@ def export_collections_tsv(output_file,collections=None):
     collections.to_csv(output_file,encoding="utf-8",sep="\t")
 
 # Image download
-def download_images(dest_dir, target=None,collection_ids=None,image_ids=None,resample=True):
-    """Downloads all stat maps and resamples them to a common space"""
+def download_images(dest_dir,images_df=None,target=None,resample=True):
+    """Downloads images dataframe and resamples them to a common space"""
     orig_path = os.path.join(dest_dir, "original")
     mkdir_p(orig_path)
     if resample == True:
+        if not target:
+            print "To resample you must specify a target!"
+            return
         resampled_path = os.path.join(dest_dir, "resampled")
         mkdir_p(resampled_path)
         target_nii = nb.load(target)  
 
-    combined_df = get_images_with_collections()
-    # If the user has specified specific images
-    if image_ids:
-        combined_df = combined_df.loc[combined_df.image_id.isin(image_ids)]
-    # If the user wants to subset to a set of collections
-    if collection_ids:
-        if isinstance(collection_ids,str): collection_ids = [collection_ids]
-        combined_df = combined_df[combined_df['collection_id'].isin(collection_ids)]
-    out_df = combined_df.copy()
+    if not isinstance(images_df,pd.DataFrame):
+        images_df = get_images()
 
-    for row in combined_df.iterrows():
+    out_df = images_df.copy()
+
+    for row in images_df.iterrows():
         # Downloading the file to the "original" subfolder
         _, _, ext = split_filename(row[1]['file'])
         orig_file = os.path.join(orig_path, "%04d%s" % (row[1]['image_id'], ext))
