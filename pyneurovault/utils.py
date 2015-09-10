@@ -103,7 +103,30 @@ def get_json(url):
         return json_single
 
 
-def get_json_df(data_type, pks=None, params=None,extend_url=None):
+def jsonlisttodf(jsonlist):
+    jsonlist = [j for j in jsonlist if j]
+    myjson = {}
+    count = 0
+    for i in range(0,len(jsonlist)):
+        if isinstance(jsonlist[i],list):
+            for j in range(0,len(jsonlist[i])):
+                myjson[count] = jsonlist[i][j]
+                count += 1
+        elif isinstance(jsonlist[0],dict):
+            myjson[count] = jsonlist[i]
+            count += 1
+    return pandas.DataFrame(myjson).transpose()
+    
+
+def add_paginated_result(json_all,json_single):
+    if "results" in json_single.keys():
+        json_all.append(json_single["results"])
+    else:
+        json_all.append(json_single)
+    return json_all
+
+
+def get_json_df(data_type, pks=None, params=None,extend_url=None,debug=False):
     '''Return paginated json data frame, for images and collections
        data_type: one of "collections" or "images"
        pks: a list of primary keys
@@ -126,35 +149,31 @@ def get_json_df(data_type, pks=None, params=None,extend_url=None):
             extend_url = [extend_url]
         extend_url = "".join(["%s/" %x for x in extend_url])
 
-    json_all = list()
-    if pks is None:  # May not be feasible call if database is too big
-        url = "http://neurovault.org/api/%s/%s?%sformat=json" % (data_type, extend_url, params)
-        json_all = pandas.DataFrame(get_json(url))
+    # If no pks specified, get all data
+    if pks is None:
+
+        if extend_url == "images" and data_type == "collections":
+            print "ERROR: use api.get_images() to download images for all collections."
+            return
+
+        # Getting all images or all collections, or either with custom params
+        else:
+            url = "http://neurovault.org/api/%s/%s?%sformat=json" % (data_type, extend_url, params)
+            return pandas.DataFrame(get_json(url))
 
     else:
+
         if isinstance(pks, str) or isinstance(pks,int):
             pks = [pks]
-        json_all = "["
+
+        json_all = []
         for p in range(0, len(pks)):
             pk = pks[p]
             print "Retrieving %s %s..." % (data_type[0:-1], pk)
-            try:
-                tmp = get_url("http://neurovault.org/api/%s/%s/%s?format=json" %(data_type,pk,extend_url))
-                if p != 0:
-                    json_all = "%s,%s" % (json_all, tmp)
-                else:
-                    json_all = "%s%s" % (json_all, tmp)
-            except:
-                print "Cannot retrieve %s %s, skipping." % (
-                    data_type[0:-1], pk)
+            url = "http://neurovault.org/api/%s/%s/%s?format=json" %(data_type,pk,extend_url)
+            if debug == True:
+                print url
+            tmp = json.loads(get_url("http://neurovault.org/api/%s/%s/%s?format=json" %(data_type,pk,extend_url)))
+            json_all = add_paginated_result(json_all,tmp)
 
-        json_all = "%s]" % json_all
-        json_all = json.loads(json_all.decode("utf-8"))
-        if len(json_all)==1:
-            if "results" in json_all[0].keys():
-                json_all = pandas.DataFrame(json_all[0]["results"])        
-            else:
-                json_all = pandas.DataFrame(json_all)                        
-        else:
-            json_all = pandas.DataFrame(json_all)
-    return json_all
+        return jsonlisttodf(json_all) 

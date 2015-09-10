@@ -21,7 +21,7 @@ setup(
     url="http://www.neurovault.org",
 
     license="LICENSE.txt",
-    description="python wrapped for NeuroVault api",
+    description="python wrapper for NeuroVault api",
 
     install_requires = ["numpy","pandas","nibabel","nilearn"]
 
