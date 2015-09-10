@@ -2,7 +2,7 @@
 
 """
 
-api: part of the pyneurovault package
+analysis: part of the pyneurovault package
 
 pyneurovault: a python wrapped for the neurovault api
 

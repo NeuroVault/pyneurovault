@@ -30,7 +30,7 @@ article = pubmed.get_single_article(doi)
 pmid = article.get_pmid()
 
 # 2) SEARCH FIELD ACROSS ALL COLLECTIONS OR DATA
-df = get_images_with_collections()
+df = get_collections()
 result = search(df=df,column_name="description_collection",search_string="OpenfMRI")
 
 

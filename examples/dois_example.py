@@ -1,12 +1,15 @@
 # Get all dois from collections using the NeuroVault API
 
-from pyneurovault.api import get_collections
+from pyneurovault.api import get_collections, export_collections_tsv
 
 # This will return a pandas data frame
 collections = get_collections()
 
 # Take a look at the fields
 collections.columns
+
+# Export collections tsv
+export_collections_tsv("/home/vanessa/Desktop/dois.tsv",collections)
 
 # Retrieve the "DOI" column, remove null values
 dois = collections["DOI"][collections["DOI"].isnull()==False]

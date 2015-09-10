@@ -12,11 +12,11 @@ import os
 import string
 import urllib
 import numpy as np
-import pandas as pd
+import pandas
 import nibabel as nb
 import numpy as np
 from nilearn.image import resample_img
-from pyneurovault.utils import get_json, get_json_df, mkdir_p, get_url, split_filename
+from utils import get_json, get_json_df, mkdir_p, get_url, split_filename
 from nilearn.masking import compute_background_mask, _extrapolate_out_mask
 
 __author__ = ["Poldracklab","Chris Filo Gorgolewski","Gael Varoquaux","Vanessa Sochat"]
@@ -24,61 +24,33 @@ __version__ = "$Revision: 1.0 $"
 __date__ = "$Date: 2015/01/16 $"
 __license__ = "BSD"
 
-# REST API Wrapper Functions
-def collections_from_dois(dois):
-    if isinstance(dois,str): return get_json("http://neurovault.org/api/collections/?DOI=%s" %(dois))
-    else:
-        collections = []
-        for doi in dois:
-            collections.append(get_json("http://neurovault.org/api/collections/?DOI=%s" %(doi)))
-        return collections
-
-def images_from_collections(collection_ids):
-    if not isinstance(collection_ids,list):
-        collection_ids = [collection_ids]
-    images = []
-    for collection in collection_ids:
-        images.append(get_json("http://neurovault.org/api/collections/%s/images" %(collection)))
-    return images
-   
-def get_images(image_ids):
-    images = []
-    if not isinstance(image_ids,list):
-        image_ids = [image_ids]
-    for image_id in image_ids:
-        images.append(get_json("http://neurovault.org/api/images/%s" %(image_id)))
-    return images
-
-
 # Summary and Counting Functions
+def get_field_counts(df,field):
+    """Get counts for a field"""
+    return images[field].value_counts()
 
-def get_paradigm_counts(images):
-    """Get counts of contrasts"""
-    return images["cognitive_paradigm_cogatlas"].value_counts()
-
-def get_modality_counts(images):
-    """Get counts of modality types"""
-    return images["modality"].value_counts()
-
-def get_map_type_counts(images):
-    """Get counts of image map types"""
-    return images["map_type"].value_counts()
-
-def get_collection_counts(images):
-    return images["collection_id"].value_counts()
+def collections_from_dois(dois,limit=100):
+    if isinstance(dois,str): 
+        dois = [dois]
+    results = pandas.DataFrame()
+    for doi in dois:
+        params = check_params({"DOI":doi},limit)
+        results = results.append(get_data(data_type="collections",params=params))
+    results.index = results.collection_id
+    return results
 
 # Database Query and table preparation
-def get_data(data_type,pks,params=None,extend_url=None):
+def get_data(data_type,pks=None,params=None,extend_url=None):
     """General get function for use by collections and images"""
     print "Extracting NeuroVault %s meta data..." %(data_type)
     if not pks:
         data = get_json_df(data_type=data_type,params=params,extend_url=extend_url)
     else:
-        data = get_json_df(data_type,pks,params=params,extend_url=extend_url)            
+        data = get_json_df(data_type=data_type,pks=pks,params=params,extend_url=extend_url)            
     data.rename(columns={'id':'collection_id'}, inplace=True)
     return data
 
-# Get image metadata
+# Get functions
 def get_images(pks=None,collection_pks=None,limit=1000,params={}):
     """Download metadata about images stored in NeuroVault and return it as a pandas DataFrame
        pks: a single or list of primary keys of images
@@ -96,7 +68,7 @@ def get_images(pks=None,collection_pks=None,limit=1000,params={}):
     return images
 
 # Get collection metadata
-def get_collections(pks=None,limit=1,params={}):
+def get_collections(pks=None,limit=100,params={}):
     """Download metadata about collections/papers stored in NeuroVault and return it as a pandas DataFrame
        pks: a single or list of primary keys of collections
        limit: maximum number of results to return per query [default 1]
@@ -111,7 +83,8 @@ def check_params(params,limit):
     if not isinstance(params,dict):
         print "Please provide params variable as a dictionary."
         return
-    return params.update({"limit":limit})
+    params.update({"limit":limit})
+    return params
 
 # Get images associated with one or more collections, return data frame with both
 def get_images_with_collections(collection_pks=None):
@@ -120,7 +93,7 @@ def get_images_with_collections(collection_pks=None):
     """
     collections_df = get_collections(pks=collection_pks)
     images_df = get_images(collection_pks=collection_pks)
-    combined_df = pd.merge(images_df, collections_df, how='left', on='collection_id',suffixes=('_image', '_collection'))
+    combined_df = pandas.merge(images_df, collections_df, how='left', on='collection_id',suffixes=('_image', '_collection'))
     return combined_df
 
 # Search
@@ -169,7 +142,7 @@ def download_images(dest_dir,images_df=None,target=None,resample=True):
         mkdir_p(resampled_path)
         target_nii = nb.load(target)  
 
-    if not isinstance(images_df,pd.DataFrame):
+    if not isinstance(images_df,pandas.DataFrame):
         images_df = get_images()
 
     out_df = images_df.copy()
