@@ -119,13 +119,13 @@ def get_image_ids(map_type=None,modality=None):
 # Export
 def export_images_tsv(output_file,images=None):
     """Export images to tab separated value file (tsv)"""
-    if images == None:
+    if not isinstance(images,pandas.DataFrame):
         images = get_images()
     images.to_csv(output_file,encoding="utf-8",sep="\t")
 
 def export_collections_tsv(output_file,collections=None):
     """Export collections to tab separated value file (tsv)"""
-    if collections == None:
+    if not isinstance(collections,pandas.DataFrame):
         collections = get_collections()
     collections.to_csv(output_file,encoding="utf-8",sep="\t")
 
