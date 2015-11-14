@@ -1,6 +1,7 @@
 machine:
   environment:
     TEST_RUN_FOLDER: /tmp
+    PATH=$HOME/miniconda2/bin:$PATH
 
 test:
   override:
@@ -12,7 +13,8 @@ dependencies:
     - wget http://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh -O miniconda.sh
     - chmod +x miniconda.sh
     - ./miniconda.sh -b
-    - export PATH=$HOME/miniconda2/bin:$PATH
+    - echo "PATH=$HOME/miniconda2/bin:$PATH" >> $HOME/.bashrc
+    - source $HOME/.bashrc
     - conda update --yes conda
     - conda create --yes -n condaenv python=2.7
     - conda install --yes -n condaenv pip
