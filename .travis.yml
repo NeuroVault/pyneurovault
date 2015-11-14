@@ -24,4 +24,3 @@ after_success:
     - coveralls
     - echo $PWD
     - ls $PWD/* -1
-
