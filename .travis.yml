@@ -8,6 +8,7 @@ virtualenv:
 
 install:
     - source continuous_integration/install.sh
+    - export PATH=$HOME/miniconda2/envs/condaenv/bin:$PATH
 
 env:
   global:

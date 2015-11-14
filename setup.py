@@ -1,5 +1,9 @@
 from setuptools import setup, find_packages
 
+# Get requires from requirements.txt
+reqs = [line.strip() for line in open('requirements.txt').readlines()]
+requirements = list(filter(None, reqs))
+
 setup(
     # Application name:
     name="pyneurovault",
@@ -23,6 +27,6 @@ setup(
     license="LICENSE.txt",
     description="python wrapper for NeuroVault api",
 
-    install_requires = ["numpy","pandas","nibabel","nilearn"]
+    install_requires = requirements
 
 )
