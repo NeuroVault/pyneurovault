@@ -20,4 +20,4 @@ dependencies:
     - conda install --yes -n condaenv pip
     - source activate condaenv
     - $HOME/miniconda2/bin/pip install setuptools
-    - $HOME/miniconda2/bin/conda install --yes pip numpy scipy nose pandas nilearn
+    - $HOME/miniconda2/bin/conda install --yes pip numpy scipy nose pandas
