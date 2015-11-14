@@ -27,7 +27,6 @@ setup(
     license="LICENSE.txt",
     description="python wrapper for NeuroVault api",
 
-    install_requires = requirements,
-    setup_requires=['numpy','pandas']
+    install_requires = requirements
 
 )
