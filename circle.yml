@@ -1,0 +1,13 @@
+machine:
+  environment:
+    TEST_RUN_FOLDER: /tmp
+
+test:
+  override:
+    - bash pyneurovault/tests/run_tests.sh $PWD/pyneurovault/tests $TEST_RUN_FOLDER
+
+dependencies:
+  pre:
+    - sudo apt-get update; 
+    - sudo apt-get install -y --force-yes r-base
+    - sudo apt-get install -y --force-yes r-base-dev
