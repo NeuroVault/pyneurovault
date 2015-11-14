@@ -32,7 +32,7 @@ def test_NeuroVault_metadata():
     check_df(df=collections,size_min=300,columns=["used_smoothing","url","collection_id"])
 
     # Test get_images_and_collections
-    combined_df = api.get_images_with_collections(collection_ids=[877,437])
+    combined_df = api.get_images_with_collections(collection_pks=[877,437])
     check_df(df=combined_df,size_min=50,columns=["url_image","collection_id","name_image","map_type","image_id"])
 
     # Test metadata for subset of collections
