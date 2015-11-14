@@ -47,7 +47,7 @@ def get_data(data_type,pks=None,params=None,extend_url=None):
         data = get_json_df(data_type=data_type,params=params,extend_url=extend_url)
     else:
         data = get_json_df(data_type=data_type,pks=pks,params=params,extend_url=extend_url)  
-    if extend_url == "images":          
+    if extend_url == "images" or data_type == "images":          
         data.rename(columns={'id':'image_id'}, inplace=True)
     else:
         data.rename(columns={'id':'collection_id'}, inplace=True) 
