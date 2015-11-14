@@ -1,7 +1,6 @@
 machine:
   environment:
     TEST_RUN_FOLDER: /tmp
-    PATH=$HOME/miniconda2/bin:$PATH
 
 test:
   override:
