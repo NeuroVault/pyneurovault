@@ -66,9 +66,8 @@ def get_images(pks=None,collection_pks=None,limit=1000,params={}):
         images = get_data(data_type="collections",pks=collection_pks,params=params,extend_url="images")
     else:
         images = get_data(data_type="images",pks=pks,params=params)
-    images = images.drop("collection_id",axis=1)
     images['collection_id'] = images['collection'].apply(lambda x: int(x.split("/")[-2]))
-    images['image_id'] = images['url'].apply(lambda x: int(x.split("/")[-2]))
+    #images['image_id'] = images['url'].apply(lambda x: int(x.split("/")[-2]))
     return images
 
 # Get collection metadata
