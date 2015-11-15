@@ -11,5 +11,5 @@ if [ "$#" -ne 2 ]; then
 fi
 
 cd $TEST_RUN_FOLDER
+which nosetests
 nosetests --verbosity=3 --nocapture --with-doctest $TESTDIR/test_queries.py $TESTDIR/test_api.py
-#nosetests --verbosity=3 --with-doctest --with-coverage --cover-package=pyneurovault $TESTDIR/test_queries.py $TESTDIR/test_api.py

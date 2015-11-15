@@ -46,8 +46,11 @@ def get_data(data_type,pks=None,params=None,extend_url=None):
     if not pks:
         data = get_json_df(data_type=data_type,params=params,extend_url=extend_url)
     else:
-        data = get_json_df(data_type=data_type,pks=pks,params=params,extend_url=extend_url)            
-    data.rename(columns={'id':'collection_id'}, inplace=True)
+        data = get_json_df(data_type=data_type,pks=pks,params=params,extend_url=extend_url)  
+    if extend_url == "images" or data_type == "images":          
+        data.rename(columns={'id':'image_id'}, inplace=True)
+    else:
+        data.rename(columns={'id':'collection_id'}, inplace=True) 
     return data
 
 # Get functions
@@ -63,8 +66,8 @@ def get_images(pks=None,collection_pks=None,limit=1000,params={}):
         images = get_data(data_type="collections",pks=collection_pks,params=params,extend_url="images")
     else:
         images = get_data(data_type="images",pks=pks,params=params)
-    images['collection'] = images['collection'].apply(lambda x: int(x.split("/")[-2]))
-    images['image_id'] = images['url'].apply(lambda x: int(x.split("/")[-2]))
+    if "collection" in images.columns:
+        images['collection_id'] = images['collection'].apply(lambda x: int(x.split("/")[-2]))
     return images
 
 # Get collection metadata
