@@ -31,19 +31,19 @@ def test_NeuroVault_metadata():
     collections = api.get_collections()
     check_df(df=collections,size_min=300,columns=["used_smoothing","url","collection_id"])
 
+    # Test metadata from specific DOIs
+    dois = collections.DOI[collections.DOI.isnull()==False].tolist()[0:15]
+    results = api.collections_from_dois(dois)
+    check_df(df=results,size_min=len(dois),columns=["used_smoothing","url","collection_id"])
+
     # Test get_images_and_collections
     combined_df = api.get_images_with_collections(collection_pks=[877,437])
     check_df(df=combined_df,size_min=50,columns=["url_image","collection_id","name_image","map_type","image_id"])
 
     # Test metadata for subset of collections
-    collections = api.get_collections(pks=collections.collection_id[0:10].tolist())
+    collections = api.get_collections(pks=[877,437])
     check_df(df=collections,size_min=10,columns=["used_smoothing","url","collection_id"])
     
     # Test metadata of images from specific collections
-    images = api.get_images(collection_pks=collections.collection_id[0:100].tolist())
-    check_df(df=images,size_min=1,columns=["url","name","map_type"])
-
-    # Test metadata from specific DOIs
-    dois = collections.DOI[collections.DOI.isnull()==False].tolist()
-    results = api.collections_from_dois(dois)
-    check_df(df=results,size_min=len(dois),columns=["used_smoothing","url","collection_id"])
+    images = api.get_images(collection_pks=[877,437])
+    check_df(df=images,size_min=50,columns=["url","name","map_type"])
