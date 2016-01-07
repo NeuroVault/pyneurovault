@@ -165,7 +165,7 @@ def get_json_df(data_type, pks=None, params=None,extend_url=None,debug=False):
             url = "http://neurovault.org/api/%s/%s/%s?format=json" %(data_type,pk,extend_url)
             if debug == True:
                 print url
-            tmp = json.loads(get_url("http://neurovault.org/api/%s/%s/%s?format=json" %(data_type,pk,extend_url)))
+            tmp = get_json("http://neurovault.org/api/%s/%s/%s?format=json" %(data_type,pk,extend_url))
             json_all.append(tmp)
 
         return jsonlisttodf(json_all) 
