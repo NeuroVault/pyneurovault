@@ -1,0 +1,1 @@
+recursive-include pyneurovault/data *.nii.gz

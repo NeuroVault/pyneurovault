@@ -118,14 +118,6 @@ def jsonlisttodf(jsonlist):
     return pandas.DataFrame(myjson).transpose()
     
 
-def add_paginated_result(json_all,json_single):
-    if "results" in json_single.keys():
-        json_all.append(json_single["results"])
-    else:
-        json_all.append(json_single)
-    return json_all
-
-
 def get_json_df(data_type, pks=None, params=None,extend_url=None,debug=False):
     '''Return paginated json data frame, for images and collections
        data_type: one of "collections" or "images"
@@ -173,7 +165,7 @@ def get_json_df(data_type, pks=None, params=None,extend_url=None,debug=False):
             url = "http://neurovault.org/api/%s/%s/%s?format=json" %(data_type,pk,extend_url)
             if debug == True:
                 print url
-            tmp = json.loads(get_url("http://neurovault.org/api/%s/%s/%s?format=json" %(data_type,pk,extend_url)))
-            json_all = add_paginated_result(json_all,tmp)
+            tmp = get_json("http://neurovault.org/api/%s/%s/%s?format=json" %(data_type,pk,extend_url))
+            json_all.append(tmp)
 
         return jsonlisttodf(json_all) 

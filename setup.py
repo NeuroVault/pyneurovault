@@ -1,15 +1,11 @@
 from setuptools import setup, find_packages
 
-# Get requires from requirements.txt
-reqs = [line.strip() for line in open('requirements.txt').readlines()]
-requirements = list(filter(None, reqs))
-
 setup(
     # Application name:
     name="pyneurovault",
 
     # Version number (initial):
-    version="0.1.0",
+    version="0.1.1",
 
     # Application author details:
     author="Poldracklab",
@@ -27,6 +23,6 @@ setup(
     license="LICENSE.txt",
     description="python wrapper for NeuroVault api",
 
-    install_requires = requirements
+    install_requires = ["pandas","nibabel","nilearn"]
 
 )

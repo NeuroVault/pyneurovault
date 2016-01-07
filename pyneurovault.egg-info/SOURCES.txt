@@ -1,4 +1,4 @@
-README.txt
+MANIFEST.in
 setup.py
 pyneurovault/__init__.py
 pyneurovault/analysis.py
