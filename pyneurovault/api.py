@@ -10,13 +10,13 @@ pyneurovault: a python wrapped for the neurovault api
 """
 import os
 import string
-import urllib
+import urllib.request, urllib.parse, urllib.error
 import numpy as np
 import pandas
 import nibabel as nb
 import numpy as np
 from nilearn.image import resample_img
-from utils import get_json, get_json_df, mkdir_p, get_url, split_filename
+from pyneurovault.utils import get_json, get_json_df, mkdir_p, get_url, split_filename
 from nilearn.masking import compute_background_mask, _extrapolate_out_mask
 
 __author__ = ["Poldracklab","Chris Filo Gorgolewski","Gael Varoquaux","Vanessa Sochat"]
@@ -42,7 +42,7 @@ def collections_from_dois(dois,limit=100):
 # Database Query and table preparation
 def get_data(data_type,pks=None,params=None,extend_url=None):
     """General get function for use by collections and images"""
-    print( "Extracting NeuroVault %s meta data..." %(data_type))
+    print(( "Extracting NeuroVault %s meta data..." %(data_type)))
     if not pks:
         data = get_json_df(data_type=data_type,params=params,extend_url=extend_url)
     else:
@@ -156,12 +156,12 @@ def download_images(dest_dir,images_df=None,target=None,resample=True):
         orig_file = os.path.join(orig_path, "%04d%s" % (row[1]['image_id'], ext))
         if not os.path.exists(orig_file):
             try:
-                print( "Downloading %s" % orig_file)
-                urllib.urlretrieve(row[1]['file'], orig_file)
+                print(( "Downloading %s" % orig_file))
+                urllib.request.urlretrieve(row[1]['file'], orig_file)
 
                 if resample == True:
                     # Compute the background and extrapolate outside of the mask
-                    print( "Extrapolating %s" % orig_file)
+                    print(( "Extrapolating %s" % orig_file))
                     niimg = nb.load(orig_file)
                     affine = niimg.get_affine()
                     data = niimg.get_data().squeeze()
@@ -176,7 +176,7 @@ def download_images(dest_dir,images_df=None,target=None,resample=True):
                     del out_of_mask, bg_mask
                     # Resampling the file to target and saving the output in the "resampled" folder
                     resampled_file = os.path.join(resampled_path,"%06d%s" % (row[1]['image_id'], ext))
-                    print( "Resampling %s" % orig_file)
+                    print(( "Resampling %s" % orig_file))
                     resampled_nii = resample_img(niimg, target_nii.get_affine(),target_nii.shape)
                     resampled_nii = nb.Nifti1Image(resampled_nii.get_data().squeeze(),
                                                    resampled_nii.get_affine(),
@@ -200,5 +200,5 @@ def download_images(dest_dir,images_df=None,target=None,resample=True):
                             this_row.image_id = this_id
                             out_df = out_df.append(this_row)
             except:
-                print( "Error downloading image id %s, retry this image." %(row[1]["image_id"]))
+                print(( "Error downloading image id %s, retry this image." %(row[1]["image_id"])))
     return out_df
