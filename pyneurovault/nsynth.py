@@ -41,7 +41,7 @@ def get_neurosynth_terms(combined_df):
         except HTTPError:
             data = {}
   
-    print "Preparing data frame..."
+    print("Preparing data frame...")
     df = pd.DataFrame(columns=["neurosynth decoding %s" %(t) for t in terms])
     for image_id,decode in scores.iteritems():
       df.loc[image_id,["neurosynth decoding %s" %(t) for t in decode.keys()]] = decode.values() 
