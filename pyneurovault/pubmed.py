@@ -10,10 +10,10 @@ pyneurovault: a python wrapped for the neurovault api
 """
 
 import tarfile
-import urllib
+import urllib.request, urllib.parse, urllib.error
 import numpy as np
 import string
-import urllib2
+import urllib.request, urllib.error, urllib.parse
 import json
 from Bio import Entrez
 import nltk
@@ -59,7 +59,7 @@ class Pubmed:
     # Now for each, assemble the URL 
     for row in subset.iterrows():
       url = "ftp://ftp.ncbi.nlm.nih.gov/pub/pmc/%s" % (row[1]["URL"])
-      print( "Downloading %s" % (url))
+      print(( "Downloading %s" % (url)))
       download_place = "%s/" %(download_folder)
       if not os.path.isfile("%s%s" %(download_place,row[1]["URL"])): 
         os.system("wget \"%s\" -P %s" % (url,download_place))
@@ -75,14 +75,14 @@ class Pubmed:
     if "IdList" in record:
       if record["Count"] != "0":
         # Get the id and fetch the paper!
-        print( "Retrieving paper " + str(id1) + "...")
+        print(( "Retrieving paper " + str(id1) + "..."))
         handle = Entrez.efetch(db='pubmed', id=record["IdList"][0],retmode='xml',retmax=1)
         record = Entrez.read(handle)
         record = record[0]
         article = Article(record)
         return article
       else: 
-        print( "No articles found for " + str(id1))
+        print(( "No articles found for " + str(id1)))
 
   """Compile search terms into one search, return all"""
   def get_many_articles(self,ids):
@@ -99,7 +99,7 @@ class Pubmed:
 
     if len(pmids) > 0: 
       # Retrieve them all!
-      print( "Retrieving %s papers..." % (len(pmids)))
+      print(( "Retrieving %s papers..." % (len(pmids))))
       handle = Entrez.efetch(db='pubmed', id=pmids,retmode='xml')
       records = Entrez.read(handle)
       articles = dict()
@@ -132,7 +132,7 @@ class Pubmed:
     [[words.append(str(porter.stem(t))) for t in word_tokenize(x.lower())] for x in term]
     # Get rid of general disease terms
     diseaseterms = ["disord","diseas","of","mental","impuls","control","health","specif","person","cognit","type","form","syndrom","spectrum","eat","depend","development","languag","by","endog","abus"]
-    words = filter(lambda x: x not in diseaseterms, words)
+    words = [x for x in words if x not in diseaseterms]
     if len(words) > 0:
       # Get unique words
       words = list(set(words))
@@ -145,13 +145,13 @@ class Pubmed:
       else:
         return 0
     else:
-      print( "Insufficient search term for term " + str(term))
+      print(( "Insufficient search term for term " + str(term)))
       return 0
 
   """Return dictionaries of dois, pmids, each with order based on author name (Last FM)"""
   def get_author_articles(self,author):
     
-    print( "Getting pubmed articles for author " + author)
+    print(( "Getting pubmed articles for author " + author))
     
     Entrez.email = self.email
     handle = Entrez.esearch(db='pubmed',term=author,retmax=5000)
@@ -197,11 +197,11 @@ class Pubmed:
 
       # If there are no papers
       else:
-        print( "No papers found for author " + author + "!")
+        print(( "No papers found for author " + author + "!"))
 
     # Return dois, pmids, each with author order
-    print( "Found " + str(len(pmid)) + " pmids for author " + author + " (for NeuroSynth 3000 database).")
-    print( "Found " + str(len(dois)) + " dois for author " + author + " (for NeuroSynth 525 database).")
+    print(( "Found " + str(len(pmid)) + " pmids for author " + author + " (for NeuroSynth 3000 database)."))
+    print(( "Found " + str(len(dois)) + " dois for author " + author + " (for NeuroSynth 525 database)."))
     return (dois, pmid)
 
 
@@ -275,7 +275,7 @@ def recursive_text_extract(xmltree):
     current = queue.pop()
     if current.text != None:
       text.append(current.text)
-    if "pub-id-type" in current.keys():
+    if "pub-id-type" in list(current.keys()):
       article_ids.append(current.text)
     if len(list(current)) > 0:
       for elem in reversed(list(current)):
@@ -290,7 +290,7 @@ def extract_xml_compressed(paper):
   tar = tarfile.open(paper, 'r:gz')
   for tar_info in tar:
     if os.path.splitext(tar_info.name)[1] == ".nxml":
-      print( "Extracting text from %s" %(tar_info.name))
+      print(( "Extracting text from %s" %(tar_info.name)))
       file_object = tar.extractfile(tar_info)
       return file_object.read().replace('\n', '')
           

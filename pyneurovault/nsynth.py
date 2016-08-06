@@ -13,7 +13,8 @@ import json
 import pandas as pd
 import numpy as np
 from pyneurovault.utils import get_url
-from urllib2 import Request, urlopen, HTTPError
+from urllib.request import Request, urlopen
+from urllib.error import HTTPError
 
 __author__ = ["Poldracklab","Chris Filo Gorgolewski","Gael Varoquaux","Vanessa Sochat"]
 __version__ = "$Revision: 1.0 $"
@@ -37,13 +38,13 @@ def get_neurosynth_terms(combined_df):
             data = data['values']
             if data:
                 scores[image_id] = data
-                terms = np.unique(terms + data.keys()).tolist()
+                terms = np.unique(terms + list(data.keys())).tolist()
         except HTTPError:
             data = {}
   
     print("Preparing data frame...")
     df = pd.DataFrame(columns=["neurosynth decoding %s" %(t) for t in terms])
-    for image_id,decode in scores.iteritems():
-      df.loc[image_id,["neurosynth decoding %s" %(t) for t in decode.keys()]] = decode.values() 
+    for image_id,decode in scores.items():
+      df.loc[image_id,["neurosynth decoding %s" %(t) for t in list(decode.keys())]] = list(decode.values()) 
     df["image_id"] = df.index
     return df
