@@ -1,7 +1,7 @@
 test:
   override:
-    - python3.5 -m unittest pyneurovault.tests.test_api
-    - python3.5 -m unittest pyneurovault.tests.test_queries
+    - python3 -m unittest pyneurovault.tests.test_api
+    - python3 -m unittest pyneurovault.tests.test_queries
 
 dependencies:
   pre:
@@ -9,7 +9,7 @@ dependencies:
     - sudo apt-get update
     - sudo apt-get install -y wget
     - wget https://bootstrap.pypa.io/get-pip.py
-    - python3.5 get-pip.py --user
-    - python2.7 get-pip.py --user
-    - python2.7 -m pip install --user setuptools numpy scipy nose pandas scikit-learn
-    - python3.5 -m pip install --user setuptools numpy scipy nose pandas scikit-learn
+    - python3 get-pip.py --user
+    - python2 get-pip.py --user
+    - python2 -m pip install --user setuptools numpy scipy nose pandas scikit-learn
+    - python3 -m pip install --user setuptools numpy scipy nose pandas scikit-learn
