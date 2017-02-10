@@ -10,6 +10,6 @@ dependencies:
     - sudo apt-get install -y wget
     - wget https://bootstrap.pypa.io/get-pip.py
     - python3 get-pip.py --user
-    - python2 get-pip.py --user
-    - python2 -m pip install --user setuptools numpy scipy nose pandas scikit-learn
+    - sudo python2 get-pip.py
+    - sudo python2 -m pip install setuptools numpy scipy nose pandas scikit-learn
     - python3 -m pip install --user setuptools numpy scipy nose pandas scikit-learn
