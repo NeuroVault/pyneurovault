@@ -1,6 +1,9 @@
 test:
   override:
     - python3 -m unittest pyneurovault.tests.test_api
+    - python3 -m unittest pyneurovault.tests.test_queries
+    - python2 -m unittest pyneurovault.tests.test_api
+    - python2 -m unittest pyneurovault.tests.test_queries
 
 dependencies:
   pre:

@@ -10,11 +10,6 @@ from numpy.testing import (
     assert_equal
 )
 
-from nose.tools import (
-    assert_true, 
-    assert_false
-)
-
 from pyneurovault.api import collections_from_dois
 import unittest
 
