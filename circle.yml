@@ -1,7 +1,6 @@
 test:
   override:
     - python3 -m unittest pyneurovault.tests.test_api
-    - python3 -m unittest pyneurovault.tests.test_queries
 
 dependencies:
   pre:
@@ -11,8 +10,8 @@ dependencies:
     - wget https://bootstrap.pypa.io/get-pip.py
     - python3 get-pip.py --user
     - sudo python2 get-pip.py
-    - sudo python2 -m pip install setuptools numpy scipy nose pandas scikit-learn
-    - python3 -m pip install --user setuptools numpy scipy nose pandas scikit-learn
+    - sudo python2 -m pip install setuptools numpy scipy nose pandas scikit-learn nibabel
+    - python3 -m pip install --user setuptools numpy scipy nose pandas scikit-learn nibabel
     - python3 -m pip install -r requirements.txt
     - sudo python2 -m pip install -r requirements.txt
 
