@@ -13,3 +13,6 @@ dependencies:
     - sudo python2 get-pip.py
     - sudo python2 -m pip install setuptools numpy scipy nose pandas scikit-learn
     - python3 -m pip install --user setuptools numpy scipy nose pandas scikit-learn
+    - python3 -m pip install -r requirements.txt
+    - sudo python2 -m pip install -r requirements.txt
+
