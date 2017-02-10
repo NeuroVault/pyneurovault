@@ -1,16 +1,15 @@
 #!/usr/bin/env python
 
-"""
+'''
 
 analysis: part of the pyneurovault package
 
 pyneurovault: a python wrapped for the neurovault api
 
 
-"""
+'''
 
-__author__ = ["Poldracklab", "Chris Filo Gorgolewski",
-              "Gael Varoquaux", "Vanessa Sochat"]
+__author__ = ["Chris Filo Gorgolewski","Gael Varoquaux", "Vanessa Sochat"]
 __version__ = "$Revision: 1.0 $"
 __date__ = "$Date: 2015/01/16 $"
 __license__ = "BSD"
@@ -18,8 +17,10 @@ __license__ = "BSD"
 import os
 import numpy as np
 import nibabel as nb
-from pyneurovault.utils import get_standard_brain, split_filename
-
+from pyneurovault.utils import (
+    get_standard_brain, 
+    split_filename
+)
 
 def get_frequency_map(images_df, dest_dir, target):
     mask_img = get_standard_brain()

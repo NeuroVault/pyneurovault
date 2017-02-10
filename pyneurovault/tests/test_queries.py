@@ -4,9 +4,18 @@
 Test NeuroVault REST API Queries
 """
 
-from numpy.testing import assert_array_equal, assert_almost_equal, assert_equal
-from nose.tools import assert_true, assert_false
-from pyneurovault.api import  collections_from_dois
+from numpy.testing import (
+    assert_array_equal, 
+    assert_almost_equal, 
+    assert_equal
+)
+
+from nose.tools import (
+    assert_true, 
+    assert_false
+)
+
+from pyneurovault.api import collections_from_dois
 
 '''Test REST API Queries'''
 def test_queries():

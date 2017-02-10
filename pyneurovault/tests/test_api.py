@@ -4,46 +4,65 @@
 Test NeuroVault (object) with images and collections dataframe output
 """
 
-from numpy.testing import assert_array_equal, assert_almost_equal, assert_equal
-from nose.tools import assert_true, assert_false
+from numpy.testing import (
+    assert_array_equal, 
+    assert_almost_equal, 
+    assert_equal
+)
+
+from nose.tools import (
+    assert_true, 
+    assert_false
+)
+
+import unittest
 import pandas
 
-def check_df(df,size_min,columns):
+
+def check_df(self,df,size_min,columns):
     assert_true(isinstance(df,pandas.core.frame.DataFrame))
     assert_true(df.shape[0] >= size_min)
     assert_true(df.columns.isin(columns).sum() == len(columns))
 
-'''Test that API dataframe object created successfully'''
-def test_NeuroVault_metadata():
-    from pyneurovault import api
 
-    # Test for all images
-    print "Checking metadata extraction for images..."
-    images = api.get_images()
-    check_df(df=images,size_min=7000,columns=["url","name","map_type"])
+class TestAPI(unittest.TestCase):
 
-    # Test for subset of images
-    images = api.get_images(pks=images.image_id[0:10].tolist())
-    check_df(df=images,size_min=10,columns=["url","name","map_type"])
+    def setUp(self):
+        print("\n---START----------------------------------------")
+        
+    def tearDown(self):
+        print("\n---END------------------------------------------")
 
-    # Test for collections
-    print "Checking metadata extraction for collections..."
-    collections = api.get_collections()
-    check_df(df=collections,size_min=300,columns=["used_smoothing","url","collection_id"])
+    def test_metadata(self):
+        from pyneurovault import api
 
-    # Test metadata from specific DOIs
-    dois = collections.DOI[collections.DOI.isnull()==False].tolist()[0:15]
-    results = api.collections_from_dois(dois)
-    check_df(df=results,size_min=len(dois),columns=["used_smoothing","url","collection_id"])
+        # Test for all images
+        print("Checking metadata extraction for images...")
+        images = api.get_images()
+        check_df(df=images,size_min=7000,columns=["url","name","map_type"])
 
-    # Test get_images_and_collections
-    combined_df = api.get_images_with_collections(collection_pks=[877,437])
-    check_df(df=combined_df,size_min=50,columns=["url_image","collection_id","name_image","map_type","image_id"])
+        # Test for subset of images
+        images = api.get_images(pks=images.image_id[0:10].tolist())
+        check_df(df=images,size_min=10,columns=["url","name","map_type"])
 
-    # Test metadata for subset of collections
-    collections = api.get_collections(pks=[877,437])
-    check_df(df=collections,size_min=1,columns=["used_smoothing","url","collection_id"])
+        # Test for collections
+        print("Checking metadata extraction for collections...")
+        collections = api.get_collections()
+        check_df(df=collections,size_min=300,columns=["used_smoothing","url","collection_id"])
+
+        # Test metadata from specific DOIs
+        dois = collections.DOI[collections.DOI.isnull()==False].tolist()[0:15]
+        results = api.collections_from_dois(dois)
+        check_df(df=results,size_min=len(dois),columns=["used_smoothing","url","collection_id"])
+
+        # Test get_images_and_collections
+        combined_df = api.get_images_with_collections(collection_pks=[877,437])
+        check_df(df=combined_df,size_min=50,columns=["url_image","collection_id","name_image","map_type","image_id"])
+
+        # Test metadata for subset of collections
+        collections = api.get_collections(pks=[877,437])
+        check_df(df=collections,size_min=1,columns=["used_smoothing","url","collection_id"])
     
-    # Test metadata of images from specific collections
-    images = api.get_images(collection_pks=[877,437])
-    check_df(df=images,size_min=50,columns=["url","name","map_type"])
+        # Test metadata of images from specific collections
+        images = api.get_images(collection_pks=[877,437])
+        check_df(df=images,size_min=50,columns=["url","name","map_type"])

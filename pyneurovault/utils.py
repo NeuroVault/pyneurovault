@@ -8,20 +8,31 @@ pyneurovault: a python wrapped for the neurovault api
 
 """
 
-import os
-import json
 import errno
+import json
+import os
 import pandas
-from urllib2 import Request, urlopen, HTTPError
+import sys
 
-__author__ = ["Poldracklab", "Chris Filo Gorgolewski",
-              "Gael Varoquaux", "Vanessa Sochat"]
+try:
+    from urllib.parse import urlencode, urlparse
+    from urllib.request import urlopen, Request, unquote
+    from urllib.error import HTTPError
+except ImportError:
+    from urllib import urlencode, unquote
+    from urlparse import urlparse
+    from urllib2 import urlopen, Request, HTTPError
+
+# Python less than version 3 must import OSError
+if sys.version_info[0] < 3:
+    from exceptions import OSError
+
+__author__ = ["Chris Filo Gorgolewski","Gael Varoquaux", "Vanessa Sochat"]
 __version__ = "$Revision: 1.0 $"
 __date__ = "$Date: 2015/01/16 $"
 __license__ = "BSD"
 
 CWD = os.path.abspath(os.path.split(__file__)[0])
-
 
 # Get standard brains
 def get_standard_brain():
@@ -46,7 +57,7 @@ def mkdir_p(path):
 # Format a dictionary of parameter keys and values into url
 def format_params(params):
     url_string = ""
-    for param,value in params.iteritems():
+    for param,value in params.items():
         url_string = "%s%s=%s&" %(url_string,param,value)
     return url_string
 
@@ -78,7 +89,7 @@ def split_filename(fname):
 
 def get_json(url):
     '''Return general json'''
-    print url
+    print(url)
     json_single = get_url(url)
     json_single = json.loads(json_single.decode("utf-8"))
     if "count" in json_single.keys():
@@ -88,16 +99,16 @@ def get_json(url):
         elif not json_single["next"] and not json_single["previous"]:
             return json_single["results"]
         else:
-            print "Found %s results." % json_single["count"]
+            print("Found %s results." % json_single["count"])
             json_all = json_single["results"]
             while json_single["next"] is not None:
-                print "Retrieving %s" % json_single["next"]
+                print("Retrieving %s" % json_single["next"])
                 try:
                     json_single = get_url(json_single["next"])
                     json_single = json.loads(json_single.decode("utf-8"))
                     json_all = json_all + json_single['results']
                 except HTTPError:
-                    print "Cannot get, retrying"
+                    print("Cannot get, retrying")
             return json_all
     else:
         return json_single
@@ -145,7 +156,7 @@ def get_json_df(data_type, pks=None, params=None,extend_url=None,debug=False):
     if pks is None:
 
         if extend_url == "images" and data_type == "collections":
-            print "ERROR: use api.get_images() to download images for all collections."
+            print("ERROR: use api.get_images() to download images for all collections.")
             return
 
         # Getting all images or all collections, or either with custom params
@@ -161,10 +172,10 @@ def get_json_df(data_type, pks=None, params=None,extend_url=None,debug=False):
         json_all = []
         for p in range(0, len(pks)):
             pk = pks[p]
-            print "Retrieving %s %s..." % (data_type[0:-1], pk)
+            print("Retrieving %s %s..." % (data_type[0:-1], pk))
             url = "http://neurovault.org/api/%s/%s/%s?format=json" %(data_type,pk,extend_url)
             if debug == True:
-                print url
+                print(url)
             tmp = get_json("http://neurovault.org/api/%s/%s/%s?format=json" %(data_type,pk,extend_url))
             json_all.append(tmp)
 

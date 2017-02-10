@@ -1,28 +1,26 @@
 #!/usr/bin/env python
 
-"""
+'''
 
 pubmed: part of the pyneurovault package
 
 pyneurovault: a python wrapped for the neurovault api
 
 
-"""
+'''
 
-import tarfile
-import urllib
-import numpy as np
-import string
-import urllib2
-import json
 from Bio import Entrez
-import nltk
-from nltk import word_tokenize
+
+from nltk import (
+    PorterStemmer, 
+    word_tokenize
+)
+
+import os
+import pandas as pd
 import re
 import sys
-import os.path
-import pandas as pd
-import os
+import tarfile
 
 __author__ = ["Poldracklab","Chris Filo Gorgolewski","Gael Varoquaux","Vanessa Sochat"]
 __version__ = "$Revision: 1.0 $"
@@ -38,7 +36,7 @@ class Pubmed:
     self.email = email
 
   def _get_pmc_lookup(self):
-    print "Downloading latest version of pubmed central ftp lookup..."
+    print("Downloading latest version of pubmed central ftp lookup...")
     self.ftp = pd.read_csv("ftp://ftp.ncbi.nlm.nih.gov/pub/pmc/file_list.txt",skiprows=1,sep="\t",header=None)
     self.ftp.columns = ["URL","JOURNAL","PMCID"]
   
@@ -59,7 +57,7 @@ class Pubmed:
     # Now for each, assemble the URL 
     for row in subset.iterrows():
       url = "ftp://ftp.ncbi.nlm.nih.gov/pub/pmc/%s" % (row[1]["URL"])
-      print "Downloading %s" % (url)
+      print("Downloading %s" %url)
       download_place = "%s/" %(download_folder)
       if not os.path.isfile("%s%s" %(download_place,row[1]["URL"])): 
         os.system("wget \"%s\" -P %s" % (url,download_place))
@@ -75,14 +73,14 @@ class Pubmed:
     if "IdList" in record:
       if record["Count"] != "0":
         # Get the id and fetch the paper!
-        print "Retrieving paper " + str(id1) + "..."
+        print("Retrieving paper %s..." %id1)
         handle = Entrez.efetch(db='pubmed', id=record["IdList"][0],retmode='xml',retmax=1)
         record = Entrez.read(handle)
         record = record[0]
         article = Article(record)
         return article
       else: 
-        print "No articles found for " + str(id1)
+        print("No articles found for %s" %id1)
 
   """Compile search terms into one search, return all"""
   def get_many_articles(self,ids):
@@ -99,7 +97,7 @@ class Pubmed:
 
     if len(pmids) > 0: 
       # Retrieve them all!
-      print "Retrieving %s papers..." % (len(pmids))
+      print("Retrieving %s papers..." % (len(pmids)))
       handle = Entrez.efetch(db='pubmed', id=pmids,retmode='xml')
       records = Entrez.read(handle)
       articles = dict()
@@ -107,7 +105,7 @@ class Pubmed:
         articles[str(record["MedlineCitation"]["PMID"])] = Article(record)
       return articles
     else: 
-        print "No articles found."
+        print("No articles found.")
 
 
   """Search article for a term of interest - no processing of expression. return 1 if found, 0 if not"""
@@ -128,7 +126,7 @@ class Pubmed:
     text = text[0].lower()
     # Perform stemming of disorder terms
     words = []
-    porter = nltk.PorterStemmer()
+    porter = PorterStemmer()
     [[words.append(str(porter.stem(t))) for t in word_tokenize(x.lower())] for x in term]
     # Get rid of general disease terms
     diseaseterms = ["disord","diseas","of","mental","impuls","control","health","specif","person","cognit","type","form","syndrom","spectrum","eat","depend","development","languag","by","endog","abus"]
@@ -145,13 +143,13 @@ class Pubmed:
       else:
         return 0
     else:
-      print "Insufficient search term for term " + str(term)
+      print("Insufficient search term for term %s" %term)
       return 0
 
   """Return dictionaries of dois, pmids, each with order based on author name (Last FM)"""
   def get_author_articles(self,author):
     
-    print "Getting pubmed articles for author " + author
+    print("Getting pubmed articles for author %s" %author)
     
     Entrez.email = self.email
     handle = Entrez.esearch(db='pubmed',term=author,retmax=5000)
@@ -197,11 +195,11 @@ class Pubmed:
 
       # If there are no papers
       else:
-        print "No papers found for author " + author + "!"
+        print("No papers found for author %s" %author)
 
     # Return dois, pmids, each with author order
-    print "Found " + str(len(pmid)) + " pmids for author " + author + " (for NeuroSynth 3000 database)."
-    print "Found " + str(len(dois)) + " dois for author " + author + " (for NeuroSynth 525 database)."
+    print("Found %s pmids for author %s (for NeuroSynth 3000 database)." %(len(pmid),author))
+    print("Found %s dois for author %s (for NeuroSynth 525 database)." %(len(dois),author))
     return (dois, pmid)
 
 
@@ -290,7 +288,7 @@ def extract_xml_compressed(paper):
   tar = tarfile.open(paper, 'r:gz')
   for tar_info in tar:
     if os.path.splitext(tar_info.name)[1] == ".nxml":
-      print "Extracting text from %s" %(tar_info.name)
+      print("Extracting text from %s" %(tar_info.name))
       file_object = tar.extractfile(tar_info)
       return file_object.read().replace('\n', '')
           

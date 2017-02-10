@@ -1,23 +1,21 @@
 machine:
-  environment:
-    TEST_RUN_FOLDER: /tmp
+  post:
+    - pyenv global 2.7.9 3.4.2
 
 test:
   override:
-    - bash pyneurovault/tests/run_tests.sh $PWD/pyneurovault/tests $TEST_RUN_FOLDER
+    - python2.7 -m unittest pyneurovault.tests.test_api
+    - python2.7 -m unittest pyneurovault.tests.test_queries
+    - python3.5 -m unittest pyneurovault.tests.test_api
+    - python3.5 -m unittest pyneurovault.tests.test_queries
 
 dependencies:
   pre:
     - echo "Pyneurovault!"
-    - wget http://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh -O miniconda.sh
-    - chmod +x miniconda.sh
-    - ./miniconda.sh -b
-    - echo "export PATH=$HOME/miniconda2/bin:\\$PATH" >> $HOME/.bashrc
-    - echo "export PATH=$HOME/miniconda2/bin:\\$PATH" >> $HOME/.env
-    - source $HOME/.bashrc
-    - conda update --yes conda
-    - conda create --yes -n condaenv python=2.7
-    - conda install --yes -n condaenv pip
-    - source activate condaenv
-    - $HOME/miniconda2/bin/pip install setuptools
-    - $HOME/miniconda2/bin/conda install --yes pip numpy scipy nose pandas scikit-learn
+    - apt-get update
+    - apt-get install -y wget
+    - wget https://bootstrap.pypa.io/get-pip.py
+    - python3.5 get-pip.py --user
+    - python2.7 get-pip.py --user
+    - python2.7 -m pip install --user setuptools numpy scipy nose pandas scikit-learn
+    - python3.5 -m pip install --user setuptools numpy scipy nose pandas scikit-learn
