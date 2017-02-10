@@ -10,8 +10,8 @@ dependencies:
     - wget https://bootstrap.pypa.io/get-pip.py
     - python3 get-pip.py --user
     - sudo python2 get-pip.py
-    - sudo python2 -m pip install setuptools numpy scipy nose pandas scikit-learn nibabel
-    - sudo python3 -m pip install setuptools numpy scipy nose pandas scikit-learn nibabel
-    - python3 -m pip install -r requirements.txt
+    - sudo python2 -m pip install setuptools numpy scipy nose pandas scikit-learn nibabel nilearn
+    - sudo python3 -m pip install setuptools numpy scipy nose pandas scikit-learn nibabel nilearn
+    - python3 -m pip install --user -r requirements.txt
     - sudo python2 -m pip install -r requirements.txt
 
