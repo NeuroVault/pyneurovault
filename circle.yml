@@ -1,20 +1,24 @@
 test:
   override:
-    - python3 -m unittest pyneurovault.tests.test_api
-    - python3 -m unittest pyneurovault.tests.test_queries
-    - python2 -m unittest pyneurovault.tests.test_api
-    - python2 -m unittest pyneurovault.tests.test_queries
+    - $HOME/miniconda2/bin/python -m unittest pyneurovault.tests.test_api
+    - $HOME/miniconda2/bin/python -m unittest pyneurovault.tests.test_queries
+    - $HOME/miniconda3/bin/python -m unittest pyneurovault.tests.test_api
+    - $HOME/miniconda3/bin/python -m unittest pyneurovault.tests.test_queries
 
 dependencies:
   pre:
-    - echo "Pyneurovault!"
-    - sudo apt-get update
-    - sudo apt-get install -y wget
-    - wget https://bootstrap.pypa.io/get-pip.py
-    - python3 get-pip.py --user
-    - sudo python2 get-pip.py
-    - sudo python2 -m pip install setuptools numpy scipy nose pandas scikit-learn nibabel nilearn
-    - sudo python3 -m pip install setuptools numpy scipy nose pandas scikit-learn nibabel nilearn
-    - python3 -m pip install --user -r requirements.txt
-    - sudo python2 -m pip install -r requirements.txt
+    - echo "Preparing Python 2 environment!"
+    - wget https://repo.continuum.io/miniconda/Miniconda2-latest-Linux-x86_64.sh -O miniconda2.sh
+    - chmod +x miniconda2.sh
+    - ./miniconda2.sh -b
+    - $HOME/miniconda2/bin/pip install setuptools
+    - $HOME/miniconda2/bin/conda install --yes pip numpy scipy nose pandas scikit-learn
+    - $HOME/miniconda2/bin/pip install -r requirements.txt
+    - echo "Preparing Python 3 environment!"
+    - wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda3.sh
+    - chmod +x miniconda3.sh
+    - ./miniconda3.sh -b
+    - $HOME/miniconda3/bin/pip install setuptools
+    - $HOME/miniconda3/bin/conda install --yes pip numpy scipy nose pandas scikit-learn
+    - $HOME/miniconda3/bin/pip install -r requirements.txt
 
