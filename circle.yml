@@ -4,8 +4,6 @@ machine:
 
 test:
   override:
-    - python2.7 -m unittest pyneurovault.tests.test_api
-    - python2.7 -m unittest pyneurovault.tests.test_queries
     - python3.5 -m unittest pyneurovault.tests.test_api
     - python3.5 -m unittest pyneurovault.tests.test_queries
 

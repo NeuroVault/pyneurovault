@@ -19,7 +19,7 @@ import unittest
 import pandas
 
 
-def check_df(self,df,size_min,columns):
+def check_df(df,size_min,columns):
     assert_true(isinstance(df,pandas.core.frame.DataFrame))
     assert_true(df.shape[0] >= size_min)
     assert_true(df.columns.isin(columns).sum() == len(columns))
@@ -35,15 +35,6 @@ class TestAPI(unittest.TestCase):
 
     def test_metadata(self):
         from pyneurovault import api
-
-        # Test for all images
-        print("Checking metadata extraction for images...")
-        images = api.get_images()
-        check_df(df=images,size_min=7000,columns=["url","name","map_type"])
-
-        # Test for subset of images
-        images = api.get_images(pks=images.image_id[0:10].tolist())
-        check_df(df=images,size_min=10,columns=["url","name","map_type"])
 
         # Test for collections
         print("Checking metadata extraction for collections...")

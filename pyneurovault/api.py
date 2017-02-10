@@ -72,7 +72,7 @@ def get_data(data_type,pks=None,params=None,extend_url=None):
     return data
 
 # Get functions
-def get_images(pks=None,collection_pks=None,limit=1000,params={}):
+def get_images(pks=None,collection_pks=None,limit=100,params={}):
     """Download metadata about images stored in NeuroVault and return it as a pandas DataFrame
        pks: a single or list of primary keys of images
        collection_pks: optional list of collection keys to limit images to. If specified, pks is ignored 
