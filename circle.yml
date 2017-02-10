@@ -6,8 +6,8 @@ test:
 dependencies:
   pre:
     - echo "Pyneurovault!"
-    - apt-get update
-    - apt-get install -y wget
+    - sudo apt-get update
+    - sudo apt-get install -y wget
     - wget https://bootstrap.pypa.io/get-pip.py
     - python3.5 get-pip.py --user
     - python2.7 get-pip.py --user
