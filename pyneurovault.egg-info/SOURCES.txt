@@ -10,7 +10,6 @@ pyneurovault/utils.py
 pyneurovault.egg-info/PKG-INFO
 pyneurovault.egg-info/SOURCES.txt
 pyneurovault.egg-info/dependency_links.txt
-pyneurovault.egg-info/pbr.json
 pyneurovault.egg-info/requires.txt
 pyneurovault.egg-info/top_level.txt
 pyneurovault/data/MNI152_T1_2mm_brain.nii.gz

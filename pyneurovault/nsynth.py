@@ -1,21 +1,30 @@
 #!/usr/bin/env python
 
-"""
+'''
 
 nsynth: functions for neurosynth integrated analysis, part of the pyneurovault package
 
 pyneurovault: a python wrapped for the neurovault api
 
 
-"""
+'''
 
 import json
-import pandas as pd
 import numpy as np
+import pandas as pd
 from pyneurovault.utils import get_url
-from urllib2 import Request, urlopen, HTTPError
 
-__author__ = ["Poldracklab","Chris Filo Gorgolewski","Gael Varoquaux","Vanessa Sochat"]
+try:
+    from urllib.parse import urlencode, urlparse
+    from urllib.request import urlopen, Request, unquote
+    from urllib.error import HTTPError
+except ImportError:
+    from urllib import urlencode, unquote
+    from urlparse import urlparse
+    from urllib2 import urlopen, Request, HTTPError
+
+
+__author__ = ["Chris Filo Gorgolewski","Gael Varoquaux","Vanessa Sochat"]
 __version__ = "$Revision: 1.0 $"
 __date__ = "$Date: 2015/01/16 $"
 __license__ = "BSD"
@@ -41,7 +50,7 @@ def get_neurosynth_terms(combined_df):
         except HTTPError:
             data = {}
   
-    print "Preparing data frame..."
+    print("Preparing data frame...")
     df = pd.DataFrame(columns=["neurosynth decoding %s" %(t) for t in terms])
     for image_id,decode in scores.iteritems():
       df.loc[image_id,["neurosynth decoding %s" %(t) for t in decode.keys()]] = decode.values() 

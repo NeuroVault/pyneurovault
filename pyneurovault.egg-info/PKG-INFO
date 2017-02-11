@@ -1,6 +1,6 @@
 Metadata-Version: 1.0
 Name: pyneurovault
-Version: 0.1.1
+Version: 0.1.2
 Summary: python wrapper for NeuroVault api
 Home-page: http://www.neurovault.org
 Author: Poldracklab
