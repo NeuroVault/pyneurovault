@@ -1,18 +1,18 @@
 # pyneurovault
 
-[![Circle CI](https://circleci.com/gh/NeuroVault/pyneurovault.svg?style=svg)](https://circleci.com/gh/NeuroVault/pyneurovault)
+[![pyneurovault](https://github.com/NeuroVault/pyneurovault/actions/workflows/main.yml/badge.svg)](https://github.com/NeuroVault/pyneurovault/actions/workflows/main.yml)
 
-python wrapper for NeuroVault api (in dev)
+python wrapper for NeuroVault api
 
 Currently supports: 
 - downloading all image and collections data into tables
 - counting unique cognitive atlas contrasts
 - downloading all resampled images
 - decoding with neurosynth terms
-
-Query functionality will be added.
+- basic querying of results
 
 ### Installation
 
-    pip install git+https://github.com/NeuroVault/pyneurovault
-
+```bash
+pip install git+https://github.com/NeuroVault/pyneurovault
+```

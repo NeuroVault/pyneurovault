@@ -1,0 +1,41 @@
+name: pyneurovault
+
+on:
+  pull_request: []
+
+jobs:
+  formatting:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup black linter
+        run: conda create --quiet --name black pyflakes
+
+      - name: Lint python code
+        run: |
+          export PATH="/usr/share/miniconda/bin:$PATH"
+          source activate black
+          pip install black
+          black --check pyneurovault
+          
+      - name: Check imports with pyflakes
+        run: |
+          export PATH="/usr/share/miniconda/bin:$PATH"
+          source activate black
+          pyflakes pyneurovault
+
+  testing:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup black linter
+        run: conda create --quiet --name test
+
+      - name: Run tests
+        run: |
+          export PATH="/usr/share/miniconda/bin:$PATH"
+          source activate test
+          conda install --yes numpy scipy nose pandas scikit-learn
+          pip install -r requirements.txt
+          python -m unittest pyneurovault.tests.test_api
+          python -m unittest pyneurovault.tests.test_queries
