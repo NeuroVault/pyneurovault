@@ -15,22 +15,22 @@ images = api.get_images()
 images = api.get_images(collection_pks=457)
 
 # Remove images that are thresholded
-images = api.filter(df=images,column_name="is_thresholded",field_value=False)
+images = api.filter(df=images, column_name="is_thresholded", field_value=False)
 
 # Not in MNI
-images = api.filter(df=images,column_name="not_mni",field_value=False)
+images = api.filter(df=images, column_name="not_mni", field_value=False)
 
 # Just fMRI bold
-images = api.filter(df=images,column_name="modality",field_value="fMRI-BOLD")
+images = api.filter(df=images, column_name="modality", field_value="fMRI-BOLD")
 
 # Download images, collections, or both
-api.export_images_tsv("/home/vanessa/Desktop/images.tsv",images)
-api.export_collections_tsv("/home/vanessa/Desktop/collections.tsv",collection)
+api.export_images_tsv("images.tsv", images)
+api.export_collections_tsv("collections.tsv", collection)
 
 # Download all images to file, resample to target
-outfolder = "/home/vanessa/Desktop"
-standard = "/usr/share/fsl/data/standard/MNI152_T1_2mm_brain.nii.gz"
-api.download_images(dest_dir = outfolder,images_df=images,target=standard)
+outfolder = os.getcwd()
+standard = "pyneurovault/data/MNI152_T1_2mm_brain.nii.gz"
+api.download_images(dest_dir=outfolder, images_df=images, target=standard)
 
 # If you don't want to resample
-api.download_images(dest_dir = outfolder,images_df=images,resample=False)
+api.download_images(dest_dir=outfolder, images_df=images, resample=False)
