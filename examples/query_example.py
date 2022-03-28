@@ -2,7 +2,7 @@
 
 # This script will use the pyneurovault module to perform single REST queries from NeuroVault. 
 
-from pyneurovault.api import collections_from_dois, images_from_collections, get_images_with_collections
+from pyneurovault.api import collections_from_dois, get_images_with_collections
 from pyneurovault import pubmed as pm
 
 # 1) SINGLE REST QUERY EXAMPLE
@@ -17,7 +17,7 @@ collection = collections_from_dois(doi)
 # 77
 
 # Get the images
-images = images_from_collections(collection[0]["id"])[0]
+images = get_images_with_collections(collection[0]["id"])[0]
 
 # Here are the file URLs for the images, as well as contrasts 
 # and cognitive atlas contrasts IDs. (we can use this later to tag to CA)
